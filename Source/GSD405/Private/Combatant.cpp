@@ -35,6 +35,11 @@ void ACombatant::Damage(int Damage)
 	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
 }
 
+void ACombatant::StartTurn_Implementation(UObject* CombatObject)
+{
+	return;
+}
+
 // Called when the game starts or when spawned
 void ACombatant::BeginPlay()
 {

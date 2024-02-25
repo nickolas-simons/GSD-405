@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "PaperZDCharacter.h"
 #include "Card.h"
 #include "Combatant.generated.h"
 
 UCLASS()
-class ACombatant : public ACharacter
+class ACombatant : public APaperZDCharacter
 {
 	GENERATED_BODY()
 
@@ -24,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Damage(int Damage);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void StartTurn(UObject* CombatObject);
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UEffect*> Effects;
