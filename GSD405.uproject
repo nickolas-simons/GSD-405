@@ -7,7 +7,12 @@
 		{
 			"Name": "GSD405",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"PaperZD",
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
