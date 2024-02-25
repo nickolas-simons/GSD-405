@@ -32,12 +32,26 @@ void ACombatant::Damage(int Damage)
 {
 	UDamagePayload* DamagePayload = NewObject<UDamagePayload>();
 	DamagePayload->Damage = Damage;
+	UE_LOG(LogTemp, Log, TEXT("Damage %d"), Damage);
 	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
 }
 
-void ACombatant::StartTurn_Implementation(UObject* CombatObject)
+void ACombatant::EndTurn()
 {
-	return;
+	CallCardEvents(ECardEvent::TurnEnd, nullptr);
+	EndTurnDelegate.ExecuteIfBound();
+}
+
+void ACombatant::StartTurn_Implementation()
+{
+	CallCardEvents(ECardEvent::TurnStart, nullptr);
+}
+
+void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)
+{
+	for (UEffect* Effect : Effects) {
+		Effect->Event(Event, Payload);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -47,11 +61,8 @@ void ACombatant::BeginPlay()
 	
 }
 
-void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)
+void ACombatant::StartCombat_Implementation()
 {
-	for (UEffect* Effect : Effects) {
-		Effect->Event(Event, Payload);
-	}
 }
 
 // Called every frame

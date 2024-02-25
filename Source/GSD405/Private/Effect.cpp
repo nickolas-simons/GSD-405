@@ -43,10 +43,6 @@ void UEffect::Event(ECardEvent Event, UObject* Payload)
 			OnRoundStart();
 			break;
 
-		case ECardEvent::RoundEnd:
-			OnRoundEnd();
-			break;
-
 		case ECardEvent::Removed:
 			OnRemoved();
 			break;
@@ -75,10 +71,6 @@ void UEffect::OnTurnEnd_Implementation()
 }
 
 void UEffect::OnRoundStart_Implementation()
-{
-}
-
-void UEffect::OnRoundEnd_Implementation()
 {
 }
 

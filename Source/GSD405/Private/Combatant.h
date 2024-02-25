@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
 #include "Card.h"
+#include "Components/WidgetComponent.h"
 #include "Combatant.generated.h"
+
+DECLARE_DELEGATE(FEndTurnDelegate);
 
 UCLASS()
 class ACombatant : public APaperZDCharacter
@@ -15,6 +18,11 @@ class ACombatant : public APaperZDCharacter
 public:
 	// Sets default values for this character's properties
 	ACombatant();
+
+	FEndTurnDelegate EndTurnDelegate;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UEffect*> Effects;
 
 	UFUNCTION(BlueprintCallable)
 	void AddEffect(FCardEffect CardEffect);
@@ -26,10 +34,17 @@ public:
 	void Damage(int Damage);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void StartTurn(UObject* CombatObject);
+	void StartTurn();
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<UEffect*> Effects;
+	UFUNCTION(BlueprintNativeEvent)
+	void StartCombat();
+
+	UFUNCTION(BlueprintCallable)
+	void CallCardEvents(ECardEvent Event, UObject* Payload);
+
+	UFUNCTION(BlueprintCallable)
+	void EndTurn();
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,9 +55,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UCard*> Deck;
-
-	UFUNCTION(BlueprintCallable)
-	void CallCardEvents(ECardEvent Event, UObject* Payload);
 
 public:	
 	// Called every frame

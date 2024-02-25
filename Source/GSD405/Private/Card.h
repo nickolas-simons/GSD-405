@@ -51,7 +51,6 @@ class UCard : public UDataAsset
 	uint32 CardCost;
 
 	UPROPERTY(EditAnywhere)
-	// Array of Effects formatted in ( <Effect Class> , <Magnitude> )
 	TArray<FCardEffect> Effects;
 
 	UPROPERTY(EditAnywhere)
