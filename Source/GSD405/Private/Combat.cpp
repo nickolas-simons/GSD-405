@@ -19,8 +19,6 @@ void UCombat::StartCombat()
 	SpawnEnemies();
 	Setup();
 
-
-	RoundStart();
 	NextTurn();
 }
 

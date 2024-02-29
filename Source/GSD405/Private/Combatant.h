@@ -6,6 +6,7 @@
 #include "PaperZDCharacter.h"
 #include "Card.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Combatant.generated.h"
 
 DECLARE_DELEGATE(FEndTurnDelegate);
@@ -21,8 +22,11 @@ public:
 
 	FEndTurnDelegate EndTurnDelegate;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<UEffect*> Effects;
+	UFUNCTION(BlueprintCallable)
+	int GetHealth();
+
+	UFUNCTION(BlueprintCallable)
+	int GetMaxHealth();
 
 	UFUNCTION(BlueprintCallable)
 	void AddEffect(FCardEffect CardEffect);
@@ -50,13 +54,31 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UWidgetComponent* StatusWidget;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UEffect*> Effects;
+
 	UPROPERTY(EditDefaultsOnly)
 	int Health;
+
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHealth;
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UCard*> Deck;
 
-public:	
+	UFUNCTION(BlueprintNativeEvent)
+	void AddEffectToStatusUI(UEffect* Effect);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void RemoveEffectFromStatusUI(UEffect* Effect);
+
+
+public:
+
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

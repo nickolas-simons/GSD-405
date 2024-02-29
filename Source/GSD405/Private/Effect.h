@@ -51,12 +51,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int Magnitude;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* StatusTexture;
+
 	FRemovalDelegate RemovalDelegate;
 
 protected:
-
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* StatusTexture;
 
 	// Called once, when the effect is initally applied
 	UFUNCTION(BlueprintNativeEvent)
