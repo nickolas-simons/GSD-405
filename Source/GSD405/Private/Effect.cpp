@@ -82,7 +82,6 @@ void UEffect::RemoveEffect()
 {
 	Event(ECardEvent::Removed, nullptr);
 	RemovalDelegate.ExecuteIfBound(this);
-	DestroyComponent();
 }
 
 

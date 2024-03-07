@@ -20,40 +20,40 @@ enum ETargetingType
 	Targeted = 1 UMETA(DisplayName = "Targeted")
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FCardEffect
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UEffect> Effect;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Magnitude;
 };
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class UCard : public UDataAsset
 {
 	GENERATED_BODY()
 	
-
-	UPROPERTY(EditAnywhere)
+	public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText CardName;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* CardThumbnail;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText CardDescription;
 
-	UPROPERTY(EditAnywhere)
-	uint32 CardCost;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int CardCost;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCardEffect> Effects;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<ETargetingType> TargetingType;
 
 };

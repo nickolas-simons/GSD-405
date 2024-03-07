@@ -64,7 +64,6 @@ void ACombatant::EndTurn()
 
 void ACombatant::StartTurn_Implementation()
 {
-	RefreshEnergy();
 	CallCardEvents(ECardEvent::TurnStart, nullptr);
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
 }
@@ -96,6 +95,7 @@ void ACombatant::BeginPlay()
 void ACombatant::StartCombat_Implementation()
 {
 	CombatDeck->InitDeck(Deck);
+	RefreshEnergy();
 }
 
 void ACombatant::AddEffectToStatusUI_Implementation(UEffect* Effect)
@@ -117,7 +117,7 @@ void ACombatant::PlayCard_Implementation(UCard* Card, ACombatant* Target)
 
 void ACombatant::RefreshEnergy()
 {
-	ModifyEnergy(MaxEnergy);
+	Energy = MaxEnergy;
 }
 
 void ACombatant::ModifyEnergy_Implementation(int modifier)

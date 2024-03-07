@@ -7,7 +7,10 @@
 #include "Card.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "CombatDeck.h"
 #include "Combatant.generated.h"
+
+#define NUM_CARDS_DRAWN 5
 
 DECLARE_DELEGATE(FEndTurnDelegate);
 
@@ -49,6 +52,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndTurn();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UCombatDeck* CombatDeck;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UCard*> Deck;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,15 +75,32 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int MaxHealth;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<UCard*> Deck;
-
 	UFUNCTION(BlueprintNativeEvent)
 	void AddEffectToStatusUI(UEffect* Effect);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void RemoveEffectFromStatusUI(UEffect* Effect);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void PlayCard(UCard* Card, ACombatant* Target);
+
+	UPROPERTY(BlueprintReadOnly)
+	int Energy;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	int MaxEnergy;
+
+	UFUNCTION(BlueprintCallable)
+	void RefreshEnergy();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ModifyEnergy(int modifier);
+
+	
+
+private:
+
+	void CullEffects();
 
 public:
 

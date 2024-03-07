@@ -54,6 +54,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* StatusTexture;
 
+	bool MarkedForRemoval = 0;
+
 	FRemovalDelegate RemovalDelegate;
 
 protected:
