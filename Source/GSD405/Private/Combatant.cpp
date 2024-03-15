@@ -56,7 +56,7 @@ void ACombatant::Damage(int Damage)
 	Health -= DamagePayload->Damage;
 }
 
-void ACombatant::EndTurn()
+void ACombatant::EndTurn_Implementation()
 {
 	CallCardEvents(ECardEvent::TurnEnd, nullptr);
 	EndTurnDelegate.ExecuteIfBound();
@@ -65,8 +65,8 @@ void ACombatant::EndTurn()
 void ACombatant::StartTurn_Implementation()
 {
 	RefreshEnergy();
-	CallCardEvents(ECardEvent::TurnStart, nullptr);
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
+	CallCardEvents(ECardEvent::TurnStart, nullptr);
 }
 
 void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)

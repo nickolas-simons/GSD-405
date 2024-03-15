@@ -49,7 +49,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallCardEvents(ECardEvent Event, UObject* Payload);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	void EndTurn();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
