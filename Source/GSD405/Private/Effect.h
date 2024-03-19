@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Effect.generated.h"
 
-DECLARE_DELEGATE_OneParam(FRemovalDelegate,UEffect*)
+DECLARE_DELEGATE_OneParam(FRemovalDelegate, UEffect*);
 
 UENUM(BlueprintType)
 enum ECardEvent
@@ -17,8 +17,7 @@ enum ECardEvent
 	TurnStart = 3		UMETA(DisplayName = "TurnStart"),
 	TurnEnd = 4			UMETA(DisplayName = "TurnEnd"),
 	RoundStart = 5		UMETA(DisplayName = "RoundStart"),
-	RoundEnd = 6		UMETA(DisplayName = "RoundEnd"),
-	Removed = 7			UMETA(DisplayName = "Removed")
+	Removed = 6		UMETA(DisplayName = "Removed")
 };
 
 UCLASS(Blueprintable)
@@ -52,12 +51,14 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int Magnitude;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* StatusTexture;
+
+	bool MarkedForRemoval = 0;
+
 	FRemovalDelegate RemovalDelegate;
 
 protected:
-
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* StatusTexture;
 
 	// Called once, when the effect is initally applied
 	UFUNCTION(BlueprintNativeEvent)
@@ -84,10 +85,6 @@ protected:
 	// Called once at the beginning of every round
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRoundStart();
-
-	// Called once at the end of every round
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRoundEnd();
 
 	// Called when the effect is removed (Destructor called)
 	UFUNCTION(BlueprintNativeEvent)
