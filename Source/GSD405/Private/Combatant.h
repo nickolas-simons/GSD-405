@@ -37,7 +37,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveEffect(UEffect* Effect);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Damage(int Damage);
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -46,11 +46,19 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void StartCombat();
 
+	UFUNCTION(BlueprintNativeEvent)
+	void CombatEnd();
+
 	UFUNCTION(BlueprintCallable)
 	void CallCardEvents(ECardEvent Event, UObject* Payload);
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	void EndTurn();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool isAlive = true;
+
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UCombatDeck* CombatDeck;
@@ -69,10 +77,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UEffect*> Effects;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int Health;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int MaxHealth;
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -83,6 +91,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void PlayCard(UCard* Card, ACombatant* Target);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Die();
 
 	UPROPERTY(BlueprintReadOnly)
 	int Energy;

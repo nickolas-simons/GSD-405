@@ -16,6 +16,9 @@ UEffect::UEffect()
 
 void UEffect::Event(ECardEvent Event, UObject* Payload)
 {
+	if (MarkedForRemoval)
+		return;
+
 	switch (Event) {
 		case ECardEvent::EffectApplied:
 			OnEffectApplied();

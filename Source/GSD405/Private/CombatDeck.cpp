@@ -29,7 +29,6 @@ void UCombatDeck::Discard(UCard* Card)
 
 void UCombatDeck::DiscardHand()
 {
-	verify(0);
 	DiscardDeck.Append(Hand);
 	Hand.Empty();
 }
@@ -55,7 +54,7 @@ TArray<UCard*> UCombatDeck::GetHand()
 
 void UCombatDeck::InitDeck(TArray<UCard*> Deck)
 {
-	DrawDeck = Deck;
+	DiscardHand();
 	DiscardDeck.Empty();
-	Hand.Empty();
+	DrawDeck = Deck;
 }

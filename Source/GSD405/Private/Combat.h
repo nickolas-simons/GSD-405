@@ -28,6 +28,9 @@ public:
 	UFUNCTION()
 	void RoundStart();
 
+	UFUNCTION()
+	void EndCombat();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	FVector EnemySpawnLocationOffset;
@@ -44,6 +47,9 @@ private:
 
 	UPROPERTY()
 	TArray<ACombatant*> TurnOrder;
+
+	UFUNCTION()
+	bool AreEnemiesDefeated();
 
 	void Setup();
 

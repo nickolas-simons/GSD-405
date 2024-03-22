@@ -46,7 +46,7 @@ void ACombatant::RemoveEffect(UEffect* Effect)
 
 
 
-void ACombatant::Damage(int Damage)
+void ACombatant::Damage_Implementation(int Damage)
 {
 	UDamagePayload* DamagePayload = NewObject<UDamagePayload>();
 	DamagePayload->Damage = Damage;
@@ -54,6 +54,9 @@ void ACombatant::Damage(int Damage)
 	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
 
 	Health -= DamagePayload->Damage;
+	if (Health <= 0) {
+		Die();
+	}
 }
 
 void ACombatant::EndTurn_Implementation()
@@ -64,6 +67,11 @@ void ACombatant::EndTurn_Implementation()
 
 void ACombatant::StartTurn_Implementation()
 {
+	if (!isAlive) {
+		EndTurn();
+		return;
+	}
+
 	RefreshEnergy();
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
 	CallCardEvents(ECardEvent::TurnStart, nullptr);
@@ -84,6 +92,16 @@ void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)
 		default:
 			break;
 	}
+}
+
+void ACombatant::Die_Implementation()
+{
+	isAlive = false;
+	for (UEffect* Effect : Effects) {
+		Effect->MarkedForRemoval = 1;
+	}
+
+	CullEffects();
 }
 
 // Called when the game starts or when spawned
@@ -118,6 +136,10 @@ void ACombatant::PlayCard_Implementation(UCard* Card, ACombatant* Target)
 void ACombatant::RefreshEnergy()
 {
 	ModifyEnergy(MaxEnergy);
+}
+
+void ACombatant::CombatEnd_Implementation()
+{
 }
 
 void ACombatant::ModifyEnergy_Implementation(int modifier)

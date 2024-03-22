@@ -20,16 +20,16 @@ enum ECardEvent
 	Removed = 6		UMETA(DisplayName = "Removed")
 };
 
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, BlueprintType)
 class UDamagePayload : public UObject
 {
 	GENERATED_BODY()
 
 	public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Damage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UObject* Responsible;
 };
 

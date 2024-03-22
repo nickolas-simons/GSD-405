@@ -29,6 +29,11 @@ void UCombat::NextTurn()
 
 	if (Current == 0)
 		RoundStart();
+
+	if (AreEnemiesDefeated()) {
+		EndCombat();
+		return;
+	}
 	
 	UE_LOG(LogTemp, Log, TEXT("TURN %d"), Current);
 	ACombatant* CurrentCombatant = TurnOrder[Current];
@@ -40,6 +45,24 @@ void UCombat::RoundStart()
 	for (ACombatant* Combatant : TurnOrder) {
 		Combatant->CallCardEvents(ECardEvent::RoundStart, nullptr);
 	}
+}
+
+void UCombat::EndCombat()
+{
+	TurnOrder.Empty();
+	Current = -1;
+	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	Player->CombatEnd();
+}
+
+bool UCombat::AreEnemiesDefeated()
+{
+	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	for (ACombatant* Combatant : TurnOrder) {
+		if (Player != Combatant && Combatant->isAlive)
+			return false;
+	}
+	return true;
 }
 
 void UCombat::Setup()
