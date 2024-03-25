@@ -59,8 +59,8 @@ void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
 	DamagePayload->Responsible = Responsible;
 	UE_LOG(LogTemp, Log, TEXT("Damage PreMitigation %d"), DamagePayload->Damage);
 
-	if (Responsible) {
-		Responsible->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
+	if (ACombatant* DamageDealer = Cast<ACombatant>(DamagePayload->Responsible)) {
+		DamageDealer->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
 	}
 
 	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);

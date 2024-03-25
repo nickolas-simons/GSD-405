@@ -32,13 +32,16 @@ public:
 	int GetMaxHealth();
 
 	UFUNCTION(BlueprintCallable)
-	void AddEffect(FCardEffect CardEffect);
+	void AddEffect(FCardEffect CardEffect, ACombatant* Applier);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveEffect(UEffect* Effect);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Damage(int Damage);
+	void Damage(int Damage, ACombatant* Responsible);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Heal(int HealAmount);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void StartTurn();

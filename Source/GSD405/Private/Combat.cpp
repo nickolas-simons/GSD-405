@@ -37,6 +37,7 @@ void UCombat::NextTurn()
 	
 	UE_LOG(LogTemp, Log, TEXT("TURN %d"), Current);
 	ACombatant* CurrentCombatant = TurnOrder[Current];
+	CurrentCombatant->EndTurnDelegate.BindUFunction(this, FName("NextTurn"));
 	CurrentCombatant->StartTurn();
 }
 
@@ -68,7 +69,6 @@ bool UCombat::AreEnemiesDefeated()
 void UCombat::Setup()
 {
 	for (ACombatant* Combatant : TurnOrder) {
-		Combatant->EndTurnDelegate.BindUFunction(this, FName("NextTurn"));
 		Combatant->StartCombat();
 	}
 }
