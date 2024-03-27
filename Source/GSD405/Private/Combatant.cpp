@@ -76,7 +76,7 @@ void ACombatant::EndTurn_Implementation()
 {
 	CallCardEvents(ECardEvent::TurnEnd, nullptr);
 	EndTurnDelegate.ExecuteIfBound();
-	EndTurnDelegate.Unbind();
+	isTurn = 0;
 }
 
 void ACombatant::StartTurn_Implementation()
@@ -85,7 +85,7 @@ void ACombatant::StartTurn_Implementation()
 		EndTurn();
 		return;
 	}
-
+	isTurn = 1;
 	RefreshEnergy();
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
 	CallCardEvents(ECardEvent::TurnStart, nullptr);

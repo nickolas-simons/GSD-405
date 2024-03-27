@@ -69,6 +69,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UCard*> Deck;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool isTurn;
+
 
 protected:
 	// Called when the game starts or when spawned

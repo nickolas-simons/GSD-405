@@ -11,7 +11,7 @@
  * 
  */
 
-#define MAX_HAND_SIZE 10
+#define MAX_HAND_SIZE 7
 #define NUM_SHUFFLES 1
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawCardDelegate, UCard*, Card);

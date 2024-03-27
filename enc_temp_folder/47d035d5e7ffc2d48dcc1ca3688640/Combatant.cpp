@@ -59,8 +59,8 @@ void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
 	DamagePayload->Responsible = Responsible;
 	UE_LOG(LogTemp, Log, TEXT("Damage PreMitigation %d"), DamagePayload->Damage);
 
-	if (ACombatant* DamageDealer = Cast<ACombatant>(DamagePayload->Responsible)) {
-		DamageDealer->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
+	if (Responsible) {
+		Responsible->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
 	}
 
 	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
@@ -77,6 +77,7 @@ void ACombatant::EndTurn_Implementation()
 	CallCardEvents(ECardEvent::TurnEnd, nullptr);
 	EndTurnDelegate.ExecuteIfBound();
 	EndTurnDelegate.Unbind();
+	isTurn = 0;
 }
 
 void ACombatant::StartTurn_Implementation()
@@ -85,7 +86,7 @@ void ACombatant::StartTurn_Implementation()
 		EndTurn();
 		return;
 	}
-
+	isTurn = 1;
 	RefreshEnergy();
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
 	CallCardEvents(ECardEvent::TurnStart, nullptr);
