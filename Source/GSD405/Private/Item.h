@@ -3,8 +3,10 @@
 #pragma once
 
 #include "Card.h"
+#include "Engine/DataAsset.h"
 #include "CoreMinimal.h"
 #include "Item.generated.h"
+
 /**
  * 
  */
@@ -19,7 +21,7 @@ enum EItemType
 };
 
 UCLASS(Blueprintable, BlueprintType)
-class UItem : public UObject
+class UItem : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -31,4 +33,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TEnumAsByte<EItemType> ItemType;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UTexture2D* CardThumbnail;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FText ItemName;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FText ItemDescription;
+
+
 };
