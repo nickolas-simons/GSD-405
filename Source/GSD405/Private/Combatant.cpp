@@ -60,10 +60,14 @@ void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
 	UE_LOG(LogTemp, Log, TEXT("Damage PreMitigation %d"), DamagePayload->Damage);
 
 	if (Responsible) {
-		Responsible->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
+		Responsible->CallCardEvents(ECardEvent::DealDamagePreMitigation, DamagePayload);
 	}
+	CallCardEvents(ECardEvent::TakeDamagePreMitigation,DamagePayload);
 
-	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
+	if (Responsible) {
+		Responsible->CallCardEvents(ECardEvent::DealDamagePostMitigation, DamagePayload);
+	}
+	CallCardEvents(ECardEvent::TakeDamagePostMitigation, DamagePayload);
 
 	UE_LOG(LogTemp, Log, TEXT("Damage Post Mitigation %d"), DamagePayload->Damage);
 	Health -= DamagePayload->Damage;

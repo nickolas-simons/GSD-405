@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Engine/DataTable.h"
 #include "Containers/Map.h"
 #include "Effect.h"
 #include "Card.generated.h"
@@ -15,9 +16,9 @@
 UENUM(BlueprintType)
 enum ETargetingType
 {
-	NonTargeted = 0	UMETA(DisplayName = "NonTargeted"),
-	
-	Targeted = 1 UMETA(DisplayName = "Targeted")
+	Targeted = 0	UMETA(DisplayName = "Targeted"),
+	Self = 1 UMETA(DisplayName = "Self"),
+	AllOpposing = 2 UMETA(DisplayName = "AllOpposing")
 };
 
 USTRUCT(BlueprintType, Blueprintable)
@@ -57,3 +58,5 @@ class UCard : public UDataAsset
 	TEnumAsByte<ETargetingType> TargetingType;
 
 };
+
+

@@ -24,14 +24,24 @@ void UEffect::Event(ECardEvent Event, UObject* Payload)
 			OnEffectApplied();
 			break;
 
-		case ECardEvent::TakeDamage:
+		case ECardEvent::TakeDamagePreMitigation:
 			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
-				OnTakeDamage(DamagePayload);
+				OnTakeDamagePreMitigation(DamagePayload);
 			break;
 
-		case ECardEvent::DealDamage:
+		case ECardEvent::TakeDamagePostMitigation:
+			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
+				OnTakeDamagePreMitigation(DamagePayload);
+			break;
+
+		case ECardEvent::DealDamagePreMitigation:
 			if(UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
-				OnDealDamage(DamagePayload);
+				OnDealDamagePreMitigation(DamagePayload);
+			break;
+
+		case ECardEvent::DealDamagePostMitigation:
+			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
+				OnDealDamagePostMitigation(DamagePayload);
 			break;
 
 		case ECardEvent::TurnStart:
@@ -57,11 +67,19 @@ void UEffect::OnEffectApplied_Implementation()
 {
 }
 
-void UEffect::OnTakeDamage_Implementation(UDamagePayload* DamagePayload)
+void UEffect::OnTakeDamagePreMitigation_Implementation(UDamagePayload* DamagePayload)
 {
 }
 
-void UEffect::OnDealDamage_Implementation(UDamagePayload* DamagePayload)
+void UEffect::OnTakeDamagePostMitigation_Implementation(UDamagePayload* DamagePayload)
+{
+}
+
+void UEffect::OnDealDamagePreMitigation_Implementation(UDamagePayload* DamagePayload)
+{
+}
+
+void UEffect::OnDealDamagePostMitigation_Implementation(UDamagePayload* DamagePayload)
 {
 }
 
