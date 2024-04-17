@@ -45,13 +45,6 @@ void ACombatant::RemoveEffect(UEffect* Effect)
 	UE_LOG(LogTemp, Log, TEXT("MARKED"));
 }
 
-void ACombatant::ClearEffects()
-{
-	for (UEffect* Effect : Effects) {
-		RemoveEffect(Effect);
-	}
-}
-
 void ACombatant::Heal_Implementation(int  HealAmount)
 {
 	Health = FMath::Clamp(Health + HealAmount, 0, MaxHealth);
@@ -138,7 +131,6 @@ void ACombatant::BeginPlay()
 
 void ACombatant::StartCombat_Implementation()
 {
-	ClearEffects();
 	CombatDeck->InitDeck(Deck);
 }
 

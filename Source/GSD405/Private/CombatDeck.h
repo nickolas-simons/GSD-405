@@ -22,7 +22,7 @@ class UCombatDeck : public UActorComponent
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Draw(int NumCards);
 
 	UFUNCTION(BlueprintCallable)

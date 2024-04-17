@@ -22,6 +22,18 @@ enum ECardEvent
 	Removed = 8		UMETA(DisplayName = "Removed")
 };
 
+USTRUCT(BlueprintType, Blueprintable)
+struct FCardEffect
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UEffect> Effect;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Magnitude;
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class UDamagePayload : public UObject
 {

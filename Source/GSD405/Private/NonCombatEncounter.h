@@ -4,11 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Effect.h"
 #include "NonCombatEncounter.generated.h"
 
 /**
  * 
  */
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FOutcome {
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float Probability;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FText OutcomeText;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TArray<FCardEffect> Consequences;
+};
 
 USTRUCT(BlueprintType, Blueprintable)
 struct FEventOption {
@@ -18,7 +33,7 @@ struct FEventOption {
 	FText OptionDescription;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	FText OptionSelectedText;
+	TArray<FOutcome> Outcomes;
 };
 
 UCLASS(Blueprintable, BlueprintType)

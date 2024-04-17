@@ -21,18 +21,6 @@ enum ETargetingType
 	AllOpposing = 2 UMETA(DisplayName = "AllOpposing")
 };
 
-USTRUCT(BlueprintType, Blueprintable)
-struct FCardEffect
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UEffect> Effect;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Magnitude;
-};
-
 UCLASS(Blueprintable, BlueprintType)
 class UCard : public UDataAsset
 {
