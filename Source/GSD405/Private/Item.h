@@ -17,7 +17,8 @@ enum EItemType
 	Armor = 1		UMETA(DisplayName = "Armor"),
 	R_Weapon = 2		UMETA(DisplayName = "R_Weapon"),
 	L_Weapon = 3		UMETA(DisplayName = "L_Weapon"),
-	Implant = 4			UMETA(DisplayName = "Implant")
+	Implant = 4			UMETA(DisplayName = "Implant"),
+	Legs = 5			UMETA(DisplayName = "Legs")
 };
 
 UCLASS(Blueprintable, BlueprintType)
