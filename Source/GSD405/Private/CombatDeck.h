@@ -22,10 +22,10 @@ class UCombatDeck : public UActorComponent
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Draw(int NumCards);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Discard(UCard* Card);
 
 	UFUNCTION()
@@ -37,7 +37,7 @@ public:
 	UFUNCTION()
 	void InitDeck(TArray<UCard*> Deck);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	TArray<UCard*> GetHand();
 
 	UPROPERTY(BlueprintAssignable)

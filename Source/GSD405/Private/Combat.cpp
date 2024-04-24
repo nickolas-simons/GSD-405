@@ -58,6 +58,9 @@ void UCombat::EndCombat()
 bool UCombat::AreEnemiesDefeated()
 {
 	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!Player->isAlive)
+		return true;
+
 	for (ACombatant* Combatant : TurnOrder) {
 		if (Player != Combatant && Combatant->isAlive)
 			return false;

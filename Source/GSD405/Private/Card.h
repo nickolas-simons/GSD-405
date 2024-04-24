@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Engine/DataTable.h"
 #include "Containers/Map.h"
 #include "Effect.h"
 #include "Card.generated.h"
@@ -15,21 +16,9 @@
 UENUM(BlueprintType)
 enum ETargetingType
 {
-	NonTargeted = 0	UMETA(DisplayName = "NonTargeted"),
-	
-	Targeted = 1 UMETA(DisplayName = "Targeted")
-};
-
-USTRUCT(BlueprintType, Blueprintable)
-struct FCardEffect
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UEffect> Effect;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Magnitude;
+	Targeted = 0	UMETA(DisplayName = "Targeted"),
+	Self = 1 UMETA(DisplayName = "Self"),
+	AllOpposing = 2 UMETA(DisplayName = "AllOpposing")
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -57,3 +46,5 @@ class UCard : public UDataAsset
 	TEnumAsByte<ETargetingType> TargetingType;
 
 };
+
+

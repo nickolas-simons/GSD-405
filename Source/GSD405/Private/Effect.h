@@ -12,12 +12,26 @@ UENUM(BlueprintType)
 enum ECardEvent
 {
 	EffectApplied = 0	UMETA(DisplayName = "EffectApplied"),
-	TakeDamage = 1		UMETA(DisplayName = "TakeDamage"),
-	DealDamage = 2		UMETA(DisplayName = "DealDamage"),
-	TurnStart = 3		UMETA(DisplayName = "TurnStart"),
-	TurnEnd = 4			UMETA(DisplayName = "TurnEnd"),
-	RoundStart = 5		UMETA(DisplayName = "RoundStart"),
-	Removed = 6		UMETA(DisplayName = "Removed")
+	TakeDamagePreMitigation = 1		UMETA(DisplayName = "TakeDamagePreMitigation"),
+	TakeDamagePostMitigation = 2 UMETA(DisplayName = "TakeDamagePostMitigation"),
+	DealDamagePreMitigation = 3		UMETA(DisplayName = "DealDamagePreMitigation"),
+	DealDamagePostMitigation = 4		UMETA(DisplayName = "DealDamagePostMitigation"),
+	TurnStart = 5		UMETA(DisplayName = "TurnStart"),
+	TurnEnd = 6			UMETA(DisplayName = "TurnEnd"),
+	RoundStart = 7		UMETA(DisplayName = "RoundStart"),
+	Removed = 8		UMETA(DisplayName = "Removed")
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FCardEffect
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UEffect> Effect;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Magnitude;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -70,12 +84,18 @@ protected:
 	// Called when the owner of the effect takes damage
 	// NEEDS DAMAGE PAYLOAD IMPLEMENTATION
 	UFUNCTION(BlueprintNativeEvent)
-	void OnTakeDamage(UDamagePayload* DamagePayload);
+	void OnTakeDamagePreMitigation(UDamagePayload* DamagePayload);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnTakeDamagePostMitigation(UDamagePayload* DamagePayload);
 
 	// Called when the owner of the effect deals damage
 	// NEEDS DAMAGE PAYLOAD IMPLEMENTATION
 	UFUNCTION(BlueprintNativeEvent)
-	void OnDealDamage(UDamagePayload* DamagePayload);
+	void OnDealDamagePostMitigation(UDamagePayload* DamagePayload);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDealDamagePreMitigation(UDamagePayload* DamagePayload);
 
 	// Called once per round at the start of the effect owner's turn
 	UFUNCTION(BlueprintNativeEvent)

@@ -45,6 +45,13 @@ void ACombatant::RemoveEffect(UEffect* Effect)
 	UE_LOG(LogTemp, Log, TEXT("MARKED"));
 }
 
+void ACombatant::ClearEffects()
+{
+	for (UEffect* Effect : Effects) {
+		RemoveEffect(Effect);
+	}
+}
+
 void ACombatant::Heal_Implementation(int  HealAmount)
 {
 	Health = FMath::Clamp(Health + HealAmount, 0, MaxHealth);
@@ -60,10 +67,14 @@ void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
 	UE_LOG(LogTemp, Log, TEXT("Damage PreMitigation %d"), DamagePayload->Damage);
 
 	if (Responsible) {
-		Responsible->CallCardEvents(ECardEvent::DealDamage, DamagePayload);
+		Responsible->CallCardEvents(ECardEvent::DealDamagePreMitigation, DamagePayload);
 	}
+	CallCardEvents(ECardEvent::TakeDamagePreMitigation,DamagePayload);
 
-	CallCardEvents(ECardEvent::TakeDamage,DamagePayload);
+	if (Responsible) {
+		Responsible->CallCardEvents(ECardEvent::DealDamagePostMitigation, DamagePayload);
+	}
+	CallCardEvents(ECardEvent::TakeDamagePostMitigation, DamagePayload);
 
 	UE_LOG(LogTemp, Log, TEXT("Damage Post Mitigation %d"), DamagePayload->Damage);
 	Health -= DamagePayload->Damage;
@@ -127,6 +138,7 @@ void ACombatant::BeginPlay()
 
 void ACombatant::StartCombat_Implementation()
 {
+	ClearEffects();
 	CombatDeck->InitDeck(Deck);
 }
 

@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveEffect(UEffect* Effect);
 
+	UFUNCTION(BlueprintCallable)
+	void ClearEffects();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Damage(int Damage, ACombatant* Responsible);
 
@@ -57,6 +60,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	void EndTurn();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ModifyEnergy(int modifier);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool isAlive = true;
@@ -109,9 +115,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void RefreshEnergy();
-
-	UFUNCTION(BlueprintNativeEvent)
-	void ModifyEnergy(int modifier);
 
 	
 
