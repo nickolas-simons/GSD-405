@@ -15,10 +15,9 @@ enum EItemType
 {
 	Helmet = 0	UMETA(DisplayName = "Helmet"),
 	Armor = 1		UMETA(DisplayName = "Armor"),
-	R_Weapon = 2		UMETA(DisplayName = "R_Weapon"),
-	L_Weapon = 3		UMETA(DisplayName = "L_Weapon"),
-	Implant = 4			UMETA(DisplayName = "Implant"),
-	Legs = 5			UMETA(DisplayName = "Legs")
+	Weapon = 2		UMETA(DisplayName = "Weapon"),
+	Implant = 3			UMETA(DisplayName = "Implant"),
+	Legs = 4			UMETA(DisplayName = "Legs")
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -36,7 +35,7 @@ public:
 	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	UTexture2D* CardThumbnail;
+	UTexture2D* ItemThumbnail;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	FText ItemName;
