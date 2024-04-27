@@ -30,13 +30,7 @@ void UCombat::NextTurn()
 	if (Current == 0)
 		RoundStart();
 
-	if (IsPlayerDefeated()) {
-		EndCombat();
-		return;
-	}
-
 	if (AreEnemiesDefeated()) {
-		DistributeRewards();
 		EndCombat();
 		return;
 	}
@@ -55,6 +49,7 @@ void UCombat::RoundStart()
 
 void UCombat::EndCombat()
 {
+	DistributeRewards();
 	TurnOrder.Empty();
 	Current = -1;
 	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
@@ -68,20 +63,14 @@ void UCombat::DistributeRewards_Implementation()
 bool UCombat::AreEnemiesDefeated()
 {
 	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!Player->isAlive)
+		return true;
 
 	for (ACombatant* Combatant : TurnOrder) {
 		if (Player != Combatant && Combatant->isAlive)
 			return false;
 	}
 	return true;
-}
-
-bool UCombat::IsPlayerDefeated()
-{
-	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (!Player->isAlive)
-		return true;
-	return false;
 }
 
 void UCombat::Setup()

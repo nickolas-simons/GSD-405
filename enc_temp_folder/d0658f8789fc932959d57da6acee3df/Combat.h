@@ -55,9 +55,6 @@ private:
 	UFUNCTION()
 	bool AreEnemiesDefeated();
 
-	UFUNCTION()
-	bool IsPlayerDefeated();
-
 	void Setup();
 
 	void SpawnEnemies();
