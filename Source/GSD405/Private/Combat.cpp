@@ -89,6 +89,7 @@ void UCombat::Setup()
 	for (ACombatant* Combatant : TurnOrder) {
 		Combatant->StartCombat();
 		Combatant->EndTurnDelegate.BindUFunction(this, FName("NextTurn"));
+		Combatant->CombatDeck->Shuffle();
 	}
 }
 
