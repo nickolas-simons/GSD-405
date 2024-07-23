@@ -6,24 +6,23 @@
 #include "Components/ActorComponent.h"
 #include "Effect.generated.h"
 
-DECLARE_DELEGATE_OneParam(FRemovalDelegate, UEffect*);
-
 UENUM(BlueprintType)
-enum ECardEvent
+enum EEffectEvent
 {
 	EffectApplied = 0	UMETA(DisplayName = "EffectApplied"),
-	TakeDamagePreMitigation = 1		UMETA(DisplayName = "TakeDamagePreMitigation"),
-	TakeDamagePostMitigation = 2 UMETA(DisplayName = "TakeDamagePostMitigation"),
-	DealDamagePreMitigation = 3		UMETA(DisplayName = "DealDamagePreMitigation"),
-	DealDamagePostMitigation = 4		UMETA(DisplayName = "DealDamagePostMitigation"),
-	TurnStart = 5		UMETA(DisplayName = "TurnStart"),
-	TurnEnd = 6			UMETA(DisplayName = "TurnEnd"),
-	RoundStart = 7		UMETA(DisplayName = "RoundStart"),
-	Removed = 8		UMETA(DisplayName = "Removed")
+	EffectRemoved = 1		UMETA(DisplayName = "EffectRemoved"),
+	TakeDamagePreMitigation = 2		UMETA(DisplayName = "TakeDamagePreMitigation"),
+	TakeDamagePostMitigation = 3	UMETA(DisplayName = "TakeDamagePostMitigation"),
+	DealDamagePreMitigation = 4		UMETA(DisplayName = "DealDamagePreMitigation"),
+	DealDamagePostMitigation = 5	UMETA(DisplayName = "DealDamagePostMitigation"),
+	TurnStart = 6		UMETA(DisplayName = "TurnStart"),
+	TurnEnd = 7			UMETA(DisplayName = "TurnEnd"),
+	RoundStart = 8		UMETA(DisplayName = "RoundStart"),
+	SkillUsed = 9		UMETA(DisplayName = "SkillUsed")
 };
 
 USTRUCT(BlueprintType, Blueprintable)
-struct FCardEffect
+struct FEffectInstance
 {
 	GENERATED_BODY()
 
@@ -45,10 +44,13 @@ class UDamagePayload : public UObject
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UObject* Responsible;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UObject* Damaged;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
-class UEffect : public UActorComponent
+UCLASS(BlueprintType, Blueprintable )
+class UEffect : public UObject
 {
 	GENERATED_BODY()
 
@@ -60,20 +62,24 @@ public:
 	void RemoveEffect();
 
 	UFUNCTION(BlueprintCallable)
-	void Event(ECardEvent Event, UObject* Payload);
+	void Event(EEffectEvent Event, UObject* Payload);
 
 	UPROPERTY(BlueprintReadWrite)
 	int Magnitude;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UTexture2D* StatusTexture;
+	UTexture2D* EffectThumbnail;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int EffectSortPriority;
 
 	UPROPERTY(BlueprintReadOnly)
-	AActor* Applier;
+	UObject* Applier;
+
+	UPROPERTY(BlueprintReadOnly)
+	UObject* Owner;
 
 	bool MarkedForRemoval = 0;
-
-	FRemovalDelegate RemovalDelegate;
 
 protected:
 
@@ -81,21 +87,29 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnEffectApplied();
 
-	// Called when the owner of the effect takes damage
-	// NEEDS DAMAGE PAYLOAD IMPLEMENTATION
+	// Called when the effect is removed
+	UFUNCTION(BlueprintNativeEvent)
+	void OnRemoved();
+
+	// Called before the owner of the effect takes damage
 	UFUNCTION(BlueprintNativeEvent)
 	void OnTakeDamagePreMitigation(UDamagePayload* DamagePayload);
 
+	// Called after the owner of the effect has taken damage and handled mitigation
 	UFUNCTION(BlueprintNativeEvent)
 	void OnTakeDamagePostMitigation(UDamagePayload* DamagePayload);
 
-	// Called when the owner of the effect deals damage
-	// NEEDS DAMAGE PAYLOAD IMPLEMENTATION
+	// Called before the owner of the effect deals damage
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDealDamagePostMitigation(UDamagePayload* DamagePayload);
 
+	// Called after the owner of the effect has dealt damage and handled mitigation
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDealDamagePreMitigation(UDamagePayload* DamagePayload);
+
+	// Called once the owner of the effect uses a skill
+	UFUNCTION(BlueprintNativeEvent)
+	void OnSkillUsed();
 
 	// Called once per round at the start of the effect owner's turn
 	UFUNCTION(BlueprintNativeEvent)
@@ -109,8 +123,6 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRoundStart();
 
-	// Called when the effect is removed (Destructor called)
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRemoved();
+	
 
 };

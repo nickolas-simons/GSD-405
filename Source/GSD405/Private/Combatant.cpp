@@ -26,29 +26,23 @@ int ACombatant::GetMaxHealth()
 	return MaxHealth;
 }
 
-void ACombatant::AddEffect(FCardEffect CardEffect, ACombatant* Applier)
+void ACombatant::AddEffect(FEffectInstance CardEffect, UObject* Applier)
 {
-	UActorComponent* EffectComponent = AddComponentByClass(CardEffect.Effect, false, FTransform(), false);
-	UEffect* Effect = Cast<UEffect>(EffectComponent);
+	UEffect* Effect = NewObject<UEffect>(this,CardEffect.Effect);
 	Effects.Add(Effect);
-	AddEffectToStatusUI(Effect);
-	Effect->RemovalDelegate.BindUFunction(this, FName("RemoveEffect"));
 	Effect->Magnitude = CardEffect.Magnitude;
+	Effect->Owner = this;
 	Effect->Applier = Applier;
-	Effect->Event(ECardEvent::EffectApplied, nullptr);
+	Effect->Event(EEffectEvent::EffectApplied, nullptr);
+	OnAddEffect.Broadcast(Effect);
 	CullEffects();
 }
 
-void ACombatant::RemoveEffect(UEffect* Effect)
-{
-	Effect->MarkedForRemoval = 1;
-	UE_LOG(LogTemp, Log, TEXT("MARKED"));
-}
 
 void ACombatant::ClearEffects()
 {
 	for (UEffect* Effect : Effects) {
-		RemoveEffect(Effect);
+		Effect->RemoveEffect();
 	}
 }
 
@@ -59,22 +53,28 @@ void ACombatant::Heal_Implementation(int  HealAmount)
 
 
 
-void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
+void ACombatant::Damage_Implementation(int Damage, UObject* Responsible)
 {
 	UDamagePayload* DamagePayload = NewObject<UDamagePayload>();
 	DamagePayload->Damage = Damage;
 	DamagePayload->Responsible = Responsible;
+	DamagePayload->Damaged = this;
 	UE_LOG(LogTemp, Log, TEXT("Damage PreMitigation %d"), DamagePayload->Damage);
 
-	if (Responsible) {
-		Responsible->CallCardEvents(ECardEvent::DealDamagePreMitigation, DamagePayload);
-	}
-	CallCardEvents(ECardEvent::TakeDamagePreMitigation,DamagePayload);
+	if (Responsible && Responsible->Implements<UEffectable>()){
+		IEffectable* InterfaceInstance = Cast<IEffectable>(Responsible);
 
-	if (Responsible) {
-		Responsible->CallCardEvents(ECardEvent::DealDamagePostMitigation, DamagePayload);
+		InterfaceInstance->CallEffectEvent(EEffectEvent::DealDamagePreMitigation, DamagePayload);
+		CallEffectEvent(EEffectEvent::TakeDamagePreMitigation, DamagePayload);
+
+		InterfaceInstance->CallEffectEvent(EEffectEvent::DealDamagePostMitigation, DamagePayload);
+		CallEffectEvent(EEffectEvent::TakeDamagePostMitigation, DamagePayload);
 	}
-	CallCardEvents(ECardEvent::TakeDamagePostMitigation, DamagePayload);
+	else {
+		CallEffectEvent(EEffectEvent::TakeDamagePreMitigation, DamagePayload);
+		CallEffectEvent(EEffectEvent::TakeDamagePostMitigation, DamagePayload);
+	}
+	
 
 	UE_LOG(LogTemp, Log, TEXT("Damage Post Mitigation %d"), DamagePayload->Damage);
 	Health -= DamagePayload->Damage;
@@ -85,9 +85,9 @@ void ACombatant::Damage_Implementation(int Damage, ACombatant* Responsible)
 
 void ACombatant::EndTurn_Implementation()
 {
-	CallCardEvents(ECardEvent::TurnEnd, nullptr);
+	CallEffectEvent(EEffectEvent::TurnEnd, nullptr);
 	EndTurnDelegate.ExecuteIfBound();
-	isTurn = 0;
+	isTurn = false;
 }
 
 void ACombatant::StartTurn_Implementation()
@@ -96,13 +96,15 @@ void ACombatant::StartTurn_Implementation()
 		EndTurn();
 		return;
 	}
-	isTurn = 1;
-	RefreshEnergy();
+	isTurn = true;
+	Inventory->WipeCharge();
+	Inventory->ResetItemUse();
+	RefreshAP();
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
-	CallCardEvents(ECardEvent::TurnStart, nullptr);
+	CallEffectEvent(EEffectEvent::TurnStart, nullptr);
 }
 
-void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)
+void ACombatant::CallEffectEvent(EEffectEvent Event, UObject* Payload)
 {
 	for (int i = 0; i < Effects.Num(); i++) {
 			Effects[i]->Event(Event, Payload);
@@ -110,10 +112,16 @@ void ACombatant::CallCardEvents(ECardEvent Event, UObject* Payload)
 	}
 
 	switch (Event) {
-		case ECardEvent::RoundStart:
-		case ECardEvent::TurnEnd:
-		case ECardEvent::TurnStart:
+		case EEffectEvent::RoundStart:
+		case EEffectEvent::TurnEnd:
+		case EEffectEvent::TurnStart:
 			CullEffects();
+		case EEffectEvent::TakeDamagePostMitigation:
+		case EEffectEvent::TakeDamagePreMitigation:
+			for (UItemInstance* Item : Inventory->ItemInstances)
+				if(Item)
+					Item->CallEffectEvent(Event, Payload);
+		
 		default:
 			break;
 	}
@@ -125,8 +133,9 @@ void ACombatant::Die_Implementation()
 	for (UEffect* Effect : Effects) {
 		Effect->MarkedForRemoval = 1;
 	}
-
 	CullEffects();
+
+	DeathDelegate.ExecuteIfBound();
 }
 
 // Called when the game starts or when spawned
@@ -139,57 +148,86 @@ void ACombatant::BeginPlay()
 void ACombatant::StartCombat_Implementation()
 {
 	ClearEffects();
-	CombatDeck->InitDeck(Deck);
+	Inventory->InitItemInstances();
+	CombatDeck->InitDeck(Inventory->ConstructDeck());
 }
 
-void ACombatant::AddEffectToStatusUI_Implementation(UEffect* Effect)
+void ACombatant::PlayCard_Implementation(UCardInstance* Card, UItemInstance* Item)
 {
-}
 
-void ACombatant::RemoveEffectFromStatusUI_Implementation(UEffect* Effect)
-{
-}
-
-void ACombatant::PlayCard_Implementation(UCard* Card, ACombatant* Target)
-{
-	ModifyEnergy(-Card->CardCost);
-	CombatDeck->Discard(Card);
-	for (FCardEffect Effect : Card->Effects) {
-		Target->AddEffect(Effect, this);
+	ModifyAP(-Card->CardData->ActionPointCost);
+	Item->ModifyCharge(1);
+	for (FEffectInstance Effect : Card->CardData->Effects) {
+		Item->AddEffect(Effect, this);
 	}
 }
 
-void ACombatant::RefreshEnergy()
+void ACombatant::UseSkill_Implementation(FSkillInstance Skill)
 {
-	ModifyEnergy(MaxEnergy);
+	Skill.Item->CallEffectEvent(EEffectEvent::SkillUsed, Skill.Skill);
+	CallEffectEvent(EEffectEvent::SkillUsed, Skill.Skill);
+
+	TArray<ACombatant*> Targets;
+	GetTargetsDelegate.ExecuteIfBound(this, Targets);
+
+	int self = Targets.Find(this);
+	TArray<ACombatant*> Targeted;
+	switch (Skill.Item->TargetingType) {
+	case ETargetingType::Self:
+		Targeted.Add(Targets[self]);
+		break;
+	case ETargetingType::AllOpposing:
+		for (int i = self; i < Targets.Num(); i++) 
+			Targeted.Add(Targets[i]);
+		break;
+	case ETargetingType::All:
+		Targeted.Append(Targets);
+		break;
+	case ETargetingType::Melee:
+		if (self + 1 < Targets.Num())
+			Targeted.Add(Targets[self + 1]);
+		break;
+	case ETargetingType::Ranged:
+		if (self + 1 < Targets.Num())
+			Targeted.Add(Targets[Targets.Num() - 1]);
+		break;
+	}
+
+	for (ACombatant* Target : Targeted) {
+		for (FEffectInstance Effect : Skill.Skill->Effects) {
+			Target->AddEffect(Effect, Skill.Item);
+		}
+	}
+}
+
+void ACombatant::RefreshAP()
+{
+	ModifyAP(MaxActionPoints);
 }
 
 void ACombatant::CombatEnd_Implementation()
 {
 }
 
-void ACombatant::ModifyEnergy_Implementation(int modifier)
+void ACombatant::ModifyAP_Implementation(int Modifier)
 {
-	Energy = FMath::Clamp(Energy +modifier, 0, MaxEnergy);
+	ActionPoints = FMath::Clamp(ActionPoints + Modifier, 0, MaxActionPoints);
 }
 
 void ACombatant::CullEffects()
 {
 	UE_LOG(LogTemp, Log, TEXT("CULLING"));
-	for (int i = 0; i < Effects.Num();) {
+	for (int i = Effects.Num() - 1; i >= 0; i--) {
 		if (Effects[i]->MarkedForRemoval) {
-			RemoveEffectFromStatusUI(Effects[i]);
-			Effects[i]->DestroyComponent();
+			OnRemoveEffect.Broadcast(Effects[i]);
+			Effects[i]->ConditionalBeginDestroy();
 			Effects.RemoveAt(i);
-		}
-		else {
-			i++;
 		}
 		UE_LOG(LogTemp, Log, TEXT("i : %d"), i);
 	}
 }
 
-// Called every frame
+
 void ACombatant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

@@ -14,7 +14,7 @@
 #define MAX_HAND_SIZE 7
 #define NUM_SHUFFLES 1
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawCardDelegate, UCard*, Card);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawCardDelegate, UCardInstance*, Card);
 
 UCLASS(BlueprintType, Blueprintable)
 class UCombatDeck : public UActorComponent
@@ -26,7 +26,7 @@ public:
 	void Draw(int NumCards);
 
 	UFUNCTION(BlueprintCallable)
-	void Discard(UCard* Card);
+	void Discard(UCardInstance* Card);
 
 	UFUNCTION()
 	void DiscardHand();
@@ -35,21 +35,21 @@ public:
 	void Shuffle();
 
 	UFUNCTION()
-	void InitDeck(TArray<UCard*> Deck);
+	void InitDeck(TArray<UCardInstance*> Deck);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<UCard*> GetHand();
+	TArray<UCardInstance*> GetHand();
 
 	UPROPERTY(BlueprintAssignable)
 	FDrawCardDelegate DrawDelegate;
 	
 private:
 	UPROPERTY()
-	TArray<UCard*> DrawDeck;
+	TArray<UCardInstance*> DrawDeck;
 
 	UPROPERTY()
-	TArray<UCard*> DiscardDeck;
+	TArray<UCardInstance*> DiscardDeck;
 
 	UPROPERTY()
-	TArray<UCard*> Hand;
+	TArray<UCardInstance*> Hand;
 };

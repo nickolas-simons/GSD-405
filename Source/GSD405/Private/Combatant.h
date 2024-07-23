@@ -4,18 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
-#include "Card.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "CombatDeck.h"
+#include "Inventory.h"
+#include "Effectable.h"
 #include "Combatant.generated.h"
 
 #define NUM_CARDS_DRAWN 5
 
-DECLARE_DELEGATE(FEndTurnDelegate);
+DECLARE_DELEGATE_TwoParams(FGetTargetsDelegate, ACombatant*, TArray<ACombatant*>&);
+
 
 UCLASS()
-class ACombatant : public APaperZDCharacter
+class ACombatant : public APaperZDCharacter, public IEffectable
 {
 	GENERATED_BODY()
 
@@ -23,7 +25,11 @@ public:
 	// Sets default values for this character's properties
 	ACombatant();
 
-	FEndTurnDelegate EndTurnDelegate;
+	FSimpleDelegate DeathDelegate;
+
+	FSimpleDelegate EndTurnDelegate;
+
+	FGetTargetsDelegate GetTargetsDelegate;
 
 	UFUNCTION(BlueprintCallable)
 	int GetHealth();
@@ -32,16 +38,16 @@ public:
 	int GetMaxHealth();
 
 	UFUNCTION(BlueprintCallable)
-	void AddEffect(FCardEffect CardEffect, ACombatant* Applier);
+	void AddEffect(FEffectInstance CardEffect, UObject* Applier) override;
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveEffect(UEffect* Effect);
+	void ClearEffects() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ClearEffects();
+	void CallEffectEvent(EEffectEvent Event, UObject* Payload) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Damage(int Damage, ACombatant* Responsible);
+	void Damage(int Damage, UObject* Responsible);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Heal(int HealAmount);
@@ -55,29 +61,23 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void CombatEnd();
 
-	UFUNCTION(BlueprintCallable)
-	void CallCardEvents(ECardEvent Event, UObject* Payload);
-
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	void EndTurn();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ModifyEnergy(int modifier);
+	void ModifyAP(int Modifier);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool isAlive = true;
 
-	
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UCombatDeck* CombatDeck;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<UCard*> Deck;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInventory* Inventory;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool isTurn;
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -95,28 +95,30 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int MaxHealth;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void AddEffectToStatusUI(UEffect* Effect);
-
-	UFUNCTION(BlueprintNativeEvent)
-	void RemoveEffectFromStatusUI(UEffect* Effect);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void PlayCard(UCardInstance* Card, UItemInstance* Item);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void PlayCard(UCard* Card, ACombatant* Target);
+	void UseSkill(FSkillInstance Skill);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Die();
 
 	UPROPERTY(BlueprintReadOnly)
-	int Energy;
+	int ActionPoints;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int MaxEnergy;
+	int MaxActionPoints;
 
 	UFUNCTION(BlueprintCallable)
-	void RefreshEnergy();
+	void RefreshAP();
 
-	
+	UPROPERTY(BlueprintAssignable)
+	FEffectDelegate OnAddEffect;
+
+	UPROPERTY(BlueprintAssignable)
+	FEffectDelegate OnRemoveEffect;
+
 
 private:
 

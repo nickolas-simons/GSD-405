@@ -4,29 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Engine/DataTable.h"
 #include "Containers/Map.h"
 #include "Effect.h"
 #include "Card.generated.h"
 
 /**
- * 
+ *
  */
 
 UENUM(BlueprintType)
-enum ETargetingType
+enum EGenre
 {
-	Targeted = 0	UMETA(DisplayName = "Targeted"),
-	Self = 1 UMETA(DisplayName = "Self"),
-	AllOpposing = 2 UMETA(DisplayName = "AllOpposing")
+	Techno = 0	UMETA(DisplayName = "Techno"),
+	Biomutation = 1		UMETA(DisplayName = "Biomutation"),
+	Military = 2		UMETA(DisplayName = "Military"),
+	Divine = 4			UMETA(DisplayName = "Divine")
 };
 
 UCLASS(Blueprintable, BlueprintType)
 class UCard : public UDataAsset
 {
 	GENERATED_BODY()
-	
-	public:
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText CardName;
 
@@ -37,14 +37,31 @@ class UCard : public UDataAsset
 	FText CardDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int CardCost;
+	int ActionPointCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FCardEffect> Effects;
+	TArray<FEffectInstance> Effects;
+};
+
+UCLASS(Blueprintable, BlueprintType)
+class UCardInstance : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UCardInstance() {}
+
+	bool operator== (const UCardInstance& Other) const
+	{
+		return CardData == Other.CardData && Genre == Other.Genre;
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<ETargetingType> TargetingType;
+	UCard* CardData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<EGenre> Genre;
 };
+
 
 

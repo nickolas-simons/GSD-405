@@ -14,14 +14,14 @@ void UCombatDeck::Draw(int NumCards)
 			
 		}
 		else {
-			UCard* DrawnCard = DrawDeck.Pop();
+			UCardInstance* DrawnCard = DrawDeck.Pop();
 			Hand.Add(DrawnCard);
 			DrawDelegate.Broadcast(DrawnCard);
 		}
 	}
 }
 
-void UCombatDeck::Discard(UCard* Card)
+void UCombatDeck::Discard(UCardInstance* Card)
 {
 	Hand.RemoveSingle(Card);
 	DiscardDeck.Add(Card);
@@ -47,12 +47,12 @@ void UCombatDeck::Shuffle()
 
 }
 
-TArray<UCard*> UCombatDeck::GetHand()
+TArray<UCardInstance*> UCombatDeck::GetHand()
 {
 	return Hand;
 }
 
-void UCombatDeck::InitDeck(TArray<UCard*> Deck)
+void UCombatDeck::InitDeck(TArray<UCardInstance*> Deck)
 {
 	DiscardHand();
 	DiscardDeck.Empty();

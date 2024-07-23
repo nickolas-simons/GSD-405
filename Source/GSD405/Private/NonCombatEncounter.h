@@ -22,7 +22,7 @@ struct FOutcome {
 	FText OutcomeText;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TArray<FCardEffect> Consequences;
+	TArray<FEffectInstance> Consequences;
 };
 
 USTRUCT(BlueprintType, Blueprintable)

@@ -2,3 +2,9 @@
 
 
 #include "Card.h"
+
+UCardInstance::UCardInstance(const UCardInstance& InCard)
+{
+	CardData = InCard.CardData;
+	Genre = InCard.Genre;
+}

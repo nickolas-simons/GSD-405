@@ -32,6 +32,9 @@ public:
 	UFUNCTION()
 	void EndCombat();
 
+	UFUNCTION()
+	void GetTargetArray(ACombatant* Focus, TArray<ACombatant*>& ReturnArray);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	FVector EnemySpawnLocationOffset;
@@ -48,6 +51,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<ACombatant*> TurnOrder;
 
+
 private:
 	UPROPERTY()
 	int Current = -1;
@@ -57,6 +61,9 @@ private:
 
 	UFUNCTION()
 	bool IsPlayerDefeated();
+
+	UFUNCTION()
+	void CheckGameEnd();
 
 	void Setup();
 

@@ -8,55 +8,54 @@ UEffect::UEffect()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
 
-void UEffect::Event(ECardEvent Event, UObject* Payload)
+void UEffect::Event(EEffectEvent Event, UObject* Payload)
 {
 	if (MarkedForRemoval)
 		return;
 
 	switch (Event) {
-		case ECardEvent::EffectApplied:
+		case EEffectEvent::EffectApplied:
 			OnEffectApplied();
 			break;
 
-		case ECardEvent::TakeDamagePreMitigation:
+		case EEffectEvent::TakeDamagePreMitigation:
 			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
 				OnTakeDamagePreMitigation(DamagePayload);
 			break;
 
-		case ECardEvent::TakeDamagePostMitigation:
+		case EEffectEvent::TakeDamagePostMitigation:
 			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
-				OnTakeDamagePreMitigation(DamagePayload);
+				OnTakeDamagePostMitigation(DamagePayload);
 			break;
 
-		case ECardEvent::DealDamagePreMitigation:
+		case EEffectEvent::DealDamagePreMitigation:
 			if(UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
 				OnDealDamagePreMitigation(DamagePayload);
 			break;
 
-		case ECardEvent::DealDamagePostMitigation:
+		case EEffectEvent::DealDamagePostMitigation:
 			if (UDamagePayload* DamagePayload = Cast<UDamagePayload>(Payload))
 				OnDealDamagePostMitigation(DamagePayload);
 			break;
 
-		case ECardEvent::TurnStart:
+		case EEffectEvent::TurnStart:
 			OnTurnStart();
 			break;
 
-		case ECardEvent::TurnEnd:
+		case EEffectEvent::TurnEnd:
 			OnTurnEnd();
 			break;
 
-		case ECardEvent::RoundStart:
+		case EEffectEvent::RoundStart:
 			OnRoundStart();
 			break;
 
-		case ECardEvent::Removed:
+		case EEffectEvent::EffectRemoved:
 			OnRemoved();
 			break;
 	}
@@ -83,6 +82,10 @@ void UEffect::OnDealDamagePostMitigation_Implementation(UDamagePayload* DamagePa
 {
 }
 
+void UEffect::OnSkillUsed_Implementation()
+{
+}
+
 void UEffect::OnTurnStart_Implementation()
 {
 }
@@ -101,8 +104,8 @@ void UEffect::OnRemoved_Implementation()
 
 void UEffect::RemoveEffect()
 {
-	Event(ECardEvent::Removed, nullptr);
-	RemovalDelegate.ExecuteIfBound(this);
+	Event(EEffectEvent::EffectRemoved, nullptr);
+	MarkedForRemoval = true;
 }
 
 
