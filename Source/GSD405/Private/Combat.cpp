@@ -70,6 +70,19 @@ void UCombat::EndCombat()
 
 }
 
+ TArray<ACombatant*> UCombat::GetAdjacent(ACombatant* Target)
+ {
+	TArray<ACombatant*> ReturnArray;
+	int i = TurnOrder.Find(Target);
+	if (i == 0)
+		 return ReturnArray;
+	if (i + 1 < TurnOrder.Num())
+		 ReturnArray.Add(TurnOrder[i + 1]);
+	if (i - 1 > 0)
+		ReturnArray.Add(TurnOrder[i - 1]);
+	return ReturnArray;
+ }
+
 void UCombat::DistributeRewards_Implementation()
 {
 }
@@ -86,6 +99,8 @@ bool UCombat::AreEnemiesDefeated()
 	}
 	return true;
 }
+
+
 
 bool UCombat::IsPlayerDefeated()
 {

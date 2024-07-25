@@ -55,6 +55,10 @@ void UEffect::Event(EEffectEvent Event, UObject* Payload)
 			OnRoundStart();
 			break;
 
+		case EEffectEvent::SkillUsed:
+			OnSkillUsed(Payload);
+			break;
+
 		case EEffectEvent::EffectRemoved:
 			OnRemoved();
 			break;
@@ -82,7 +86,7 @@ void UEffect::OnDealDamagePostMitigation_Implementation(UDamagePayload* DamagePa
 {
 }
 
-void UEffect::OnSkillUsed_Implementation()
+void UEffect::OnSkillUsed_Implementation(UObject* Skill)
 {
 }
 
@@ -107,5 +111,3 @@ void UEffect::RemoveEffect()
 	Event(EEffectEvent::EffectRemoved, nullptr);
 	MarkedForRemoval = true;
 }
-
-

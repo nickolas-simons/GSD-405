@@ -96,6 +96,9 @@ protected:
 	int Charge;
 
 	UPROPERTY(BlueprintReadOnly)
+	int Stat;
+
+	UPROPERTY(BlueprintReadOnly)
 	TArray<UEffect*> Effects;
 
 public:
@@ -113,6 +116,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ModifyCharge(int Modifier);
+
+	UFUNCTION(BlueprintCallable)
+	void ModifyStat(int Modifier);
+
+	UFUNCTION(BlueprintCallable)
+	void ResetStat();
 
 	void CallEffectEvent(EEffectEvent Event, UObject* Payload) override;
 

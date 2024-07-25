@@ -35,6 +35,9 @@ public:
 	UFUNCTION()
 	void GetTargetArray(ACombatant* Focus, TArray<ACombatant*>& ReturnArray);
 
+	UFUNCTION(BlueprintCallable)
+	TArray<ACombatant*> GetAdjacent(ACombatant* Target);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	FVector EnemySpawnLocationOffset;

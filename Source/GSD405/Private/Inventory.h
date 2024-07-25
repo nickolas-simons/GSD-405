@@ -65,6 +65,9 @@ public:
 	void WipeCharge();
 
 	UFUNCTION(BlueprintCallable)
+	void ResetStats();
+
+	UFUNCTION(BlueprintCallable)
 	void ResetItemUse();
 
 	UFUNCTION(BlueprintCallable)

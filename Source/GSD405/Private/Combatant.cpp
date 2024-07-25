@@ -98,6 +98,7 @@ void ACombatant::StartTurn_Implementation()
 	}
 	isTurn = true;
 	Inventory->WipeCharge();
+	Inventory->ResetStats();
 	Inventory->ResetItemUse();
 	RefreshAP();
 	CombatDeck->Draw(NUM_CARDS_DRAWN);
@@ -118,6 +119,7 @@ void ACombatant::CallEffectEvent(EEffectEvent Event, UObject* Payload)
 			CullEffects();
 		case EEffectEvent::TakeDamagePostMitigation:
 		case EEffectEvent::TakeDamagePreMitigation:
+		case EEffectEvent::SkillUsed:
 			for (UItemInstance* Item : Inventory->ItemInstances)
 				if(Item)
 					Item->CallEffectEvent(Event, Payload);
@@ -156,7 +158,6 @@ void ACombatant::PlayCard_Implementation(UCardInstance* Card, UItemInstance* Ite
 {
 
 	ModifyAP(-Card->CardData->ActionPointCost);
-	Item->ModifyCharge(1);
 	for (FEffectInstance Effect : Card->CardData->Effects) {
 		Item->AddEffect(Effect, this);
 	}
@@ -164,36 +165,18 @@ void ACombatant::PlayCard_Implementation(UCardInstance* Card, UItemInstance* Ite
 
 void ACombatant::UseSkill_Implementation(FSkillInstance Skill)
 {
-	Skill.Item->CallEffectEvent(EEffectEvent::SkillUsed, Skill.Skill);
-	CallEffectEvent(EEffectEvent::SkillUsed, Skill.Skill);
-
 	TArray<ACombatant*> Targets;
-	GetTargetsDelegate.ExecuteIfBound(this, Targets);
+	GetTargets(Skill.Item->TargetingType, Targets);
 
-	int self = Targets.Find(this);
-	TArray<ACombatant*> Targeted;
-	switch (Skill.Item->TargetingType) {
-	case ETargetingType::Self:
-		Targeted.Add(Targets[self]);
-		break;
-	case ETargetingType::AllOpposing:
-		for (int i = self; i < Targets.Num(); i++) 
-			Targeted.Add(Targets[i]);
-		break;
-	case ETargetingType::All:
-		Targeted.Append(Targets);
-		break;
-	case ETargetingType::Melee:
-		if (self + 1 < Targets.Num())
-			Targeted.Add(Targets[self + 1]);
-		break;
-	case ETargetingType::Ranged:
-		if (self + 1 < Targets.Num())
-			Targeted.Add(Targets[Targets.Num() - 1]);
-		break;
-	}
+	USkillPayload* SkillPayload = NewObject<USkillPayload>();
+	SkillPayload->Skill = Skill;
+	for (ACombatant* Target : Targets) 
+		SkillPayload->Targets.Add(Target);
+	
+	Skill.Item->CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
+	CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
 
-	for (ACombatant* Target : Targeted) {
+	for (ACombatant* Target : Targets) {
 		for (FEffectInstance Effect : Skill.Skill->Effects) {
 			Target->AddEffect(Effect, Skill.Item);
 		}
@@ -212,6 +195,45 @@ void ACombatant::CombatEnd_Implementation()
 void ACombatant::ModifyAP_Implementation(int Modifier)
 {
 	ActionPoints = FMath::Clamp(ActionPoints + Modifier, 0, MaxActionPoints);
+}
+
+void ACombatant::GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<ACombatant*>& ReturnByRef)
+{
+	TArray<ACombatant*> Targets;
+	GetTargetsDelegate.ExecuteIfBound(this, Targets);
+	int self = Targets.Find(this);
+	int flag = self + 1;
+	switch (TargetingType) {
+	case ETargetingType::Self:
+		ReturnByRef.Add(Targets[self]);
+		break;
+	case ETargetingType::AllOpposing:
+		for (int i = self + 1; i < Targets.Num(); i++)
+			ReturnByRef.Add(Targets[i]);
+		break;
+	case ETargetingType::All:
+		ReturnByRef.Append(Targets);
+		break;
+	case ETargetingType::Melee:
+		ReturnByRef.Add(Targets[self + 1]);
+		break;
+	case ETargetingType::Ranged:
+		ReturnByRef.Add(Targets[Targets.Num() - 1]);
+		break;
+	case ETargetingType::MostHealth:
+		for (int i = self + 1; i < Targets.Num(); i++)
+			if (Targets[i]->GetHealth() > Targets[flag]->GetHealth())
+				flag = i;
+		ReturnByRef.Add(Targets[flag]);
+		break;
+	case ETargetingType::LeastHealth:
+		for (int i = self + 1; i < Targets.Num(); i++)
+			if (Targets[i]->GetHealth() < Targets[flag]->GetHealth())
+				flag = i;
+		ReturnByRef.Add(Targets[flag]);
+		break;
+	}
+	
 }
 
 void ACombatant::CullEffects()

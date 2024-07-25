@@ -49,6 +49,16 @@ void UItemInstance::ModifyCharge(int Modifier)
 	OnChargeModify.Broadcast();
 }
 
+void UItemInstance::ModifyStat(int Modifier)
+{
+	Stat = Stat + Modifier;
+}
+
+void UItemInstance::ResetStat()
+{
+	Stat = 0;
+}
+
 void UItemInstance::CallEffectEvent(EEffectEvent Event, UObject* Payload)
 {
 	for (int i = 0; i < Effects.Num(); i++) {

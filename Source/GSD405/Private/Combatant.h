@@ -119,6 +119,8 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FEffectDelegate OnRemoveEffect;
 
+	UFUNCTION()
+	void GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<ACombatant*>& ReturnByRef);
 
 private:
 

@@ -18,7 +18,7 @@ enum EGenre
 	Techno = 0	UMETA(DisplayName = "Techno"),
 	Biomutation = 1		UMETA(DisplayName = "Biomutation"),
 	Military = 2		UMETA(DisplayName = "Military"),
-	Divine = 4			UMETA(DisplayName = "Divine")
+	Mechanical = 4			UMETA(DisplayName = "Mechanical")
 };
 
 UCLASS(Blueprintable, BlueprintType)

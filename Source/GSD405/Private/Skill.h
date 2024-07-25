@@ -16,7 +16,9 @@ enum ETargetingType
 	AllOpposing = 1 UMETA(DisplayName = "AllOpposing"),
 	All = 2 UMETA(DisplayName = "All"),
 	Melee = 3 UMETA(DisplayName = "Melee"),
-	Ranged = 4 UMETA(DisplayName = "Ranged")
+	Ranged = 4 UMETA(DisplayName = "Ranged"),
+	MostHealth = 5 UMETA(DisplayName = "MostHealth"),
+	LeastHealth = 6 UMETA(DisplayName = "LeastHealth")
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -53,4 +55,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UItemInstance* Item;
+};
+
+
+UCLASS(Blueprintable, BlueprintType)
+class USkillPayload : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FSkillInstance Skill;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray <UObject*> Targets;
 };

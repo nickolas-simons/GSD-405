@@ -68,11 +68,21 @@ void UInventory::WipeCharge()
 	}
 }
 
+void UInventory::ResetStats()
+{
+	for (UItemInstance* Item : ItemInstances) {
+		if (Item) {
+			Item->ResetStat();
+		}
+	}
+}
+
 void UInventory::ResetItemUse()
 {
 	for (UItemInstance* Item : ItemInstances) {
-		if (Item)
+		if (Item) {
 			Item->IsUsed = false;
+		}
 	}
 }
 

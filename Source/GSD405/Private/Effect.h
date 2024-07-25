@@ -49,12 +49,12 @@ class UDamagePayload : public UObject
 	UObject* Damaged;
 };
 
-UCLASS(BlueprintType, Blueprintable )
+UCLASS(BlueprintType, Blueprintable)
 class UEffect : public UObject
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UEffect();
 
@@ -109,7 +109,7 @@ protected:
 
 	// Called once the owner of the effect uses a skill
 	UFUNCTION(BlueprintNativeEvent)
-	void OnSkillUsed();
+	void OnSkillUsed(UObject* Skill);
 
 	// Called once per round at the start of the effect owner's turn
 	UFUNCTION(BlueprintNativeEvent)
@@ -122,7 +122,4 @@ protected:
 	// Called once at the beginning of every round
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRoundStart();
-
-	
-
 };
