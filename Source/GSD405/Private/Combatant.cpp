@@ -116,10 +116,10 @@ void ACombatant::CallEffectEvent(EEffectEvent Event, UObject* Payload)
 		case EEffectEvent::RoundStart:
 		case EEffectEvent::TurnEnd:
 		case EEffectEvent::TurnStart:
+		case EEffectEvent::SkillUsed:
 			CullEffects();
 		case EEffectEvent::TakeDamagePostMitigation:
 		case EEffectEvent::TakeDamagePreMitigation:
-		case EEffectEvent::SkillUsed:
 			for (UItemInstance* Item : Inventory->ItemInstances)
 				if(Item)
 					Item->CallEffectEvent(Event, Payload);
@@ -215,20 +215,22 @@ void ACombatant::GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<AC
 		ReturnByRef.Append(Targets);
 		break;
 	case ETargetingType::Melee:
-		ReturnByRef.Add(Targets[self + 1]);
+		for (int i = self+1; i < Targets.Num(); i++)
+			if (Targets[i]->isAlive) {
+				ReturnByRef.Add(Targets[i]);
+				break;
+			}
 		break;
 	case ETargetingType::Ranged:
-		ReturnByRef.Add(Targets[Targets.Num() - 1]);
+		for(int i = Targets.Num()-1; i > 0; i--)
+			if (Targets[i]->isAlive) {
+				ReturnByRef.Add(Targets[i]);
+				break;
+			}
 		break;
 	case ETargetingType::MostHealth:
 		for (int i = self + 1; i < Targets.Num(); i++)
 			if (Targets[i]->GetHealth() > Targets[flag]->GetHealth())
-				flag = i;
-		ReturnByRef.Add(Targets[flag]);
-		break;
-	case ETargetingType::LeastHealth:
-		for (int i = self + 1; i < Targets.Num(); i++)
-			if (Targets[i]->GetHealth() < Targets[flag]->GetHealth())
 				flag = i;
 		ReturnByRef.Add(Targets[flag]);
 		break;

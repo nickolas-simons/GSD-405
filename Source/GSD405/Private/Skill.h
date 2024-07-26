@@ -17,8 +17,7 @@ enum ETargetingType
 	All = 2 UMETA(DisplayName = "All"),
 	Melee = 3 UMETA(DisplayName = "Melee"),
 	Ranged = 4 UMETA(DisplayName = "Ranged"),
-	MostHealth = 5 UMETA(DisplayName = "MostHealth"),
-	LeastHealth = 6 UMETA(DisplayName = "LeastHealth")
+	MostHealth = 5 UMETA(DisplayName = "MostHealth")
 };
 
 UCLASS(Blueprintable, BlueprintType)
