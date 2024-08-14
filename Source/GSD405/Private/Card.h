@@ -12,15 +12,6 @@
  *
  */
 
-UENUM(BlueprintType)
-enum EGenre
-{
-	Techno = 0	UMETA(DisplayName = "Techno"),
-	Biomutation = 1		UMETA(DisplayName = "Biomutation"),
-	Military = 2		UMETA(DisplayName = "Military"),
-	Mechanical = 4			UMETA(DisplayName = "Mechanical")
-};
-
 UCLASS(Blueprintable, BlueprintType)
 class UCard : public UDataAsset
 {
@@ -38,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int ActionPointCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int ActivationPoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FEffectInstance> Effects;

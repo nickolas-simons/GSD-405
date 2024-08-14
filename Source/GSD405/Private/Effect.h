@@ -7,6 +7,15 @@
 #include "Effect.generated.h"
 
 UENUM(BlueprintType)
+enum EGenre
+{
+	Techno = 0	UMETA(DisplayName = "Techno"),
+	Biomutation = 1		UMETA(DisplayName = "Biomutation"),
+	Military = 2		UMETA(DisplayName = "Military"),
+	Mechanical = 4			UMETA(DisplayName = "Mechanical")
+};
+
+UENUM(BlueprintType)
 enum EEffectEvent
 {
 	EffectApplied = 0	UMETA(DisplayName = "EffectApplied"),

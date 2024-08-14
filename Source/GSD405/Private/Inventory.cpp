@@ -60,11 +60,11 @@ void UInventory::InitItemInstances()
 	}
 }
 
-void UInventory::WipeCharge()
+void UInventory::ResetSkillRequirements()
 {
 	for (UItemInstance* Item : ItemInstances) {
-		if(Item)
-			Item->ModifyCharge(-Item->Item->MaxCharge);
+		if (Item)
+			Item->ResetActivationPoints();
 	}
 }
 

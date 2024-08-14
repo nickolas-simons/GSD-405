@@ -36,11 +36,34 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText SkillDescription;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int ChargeNeeded;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FEffectInstance Effect;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FSkillPrereq
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EGenre> Genre;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FEffectInstance> Effects;
+	int Count;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FItemSkill
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkill* Skill;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSkillPrereq> SkillReq;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -50,10 +73,10 @@ struct FSkillInstance
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USkill* Skill;
+	UItemInstance* Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UItemInstance* Item;
+	FItemSkill Skill;
 };
 
 

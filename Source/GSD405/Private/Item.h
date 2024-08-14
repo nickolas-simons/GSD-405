@@ -66,7 +66,7 @@ public:
 	FText ItemDescription;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TArray<USkill*> Skills;
+	TArray<FItemSkill> Skills;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	int MaxCharge;
@@ -93,9 +93,6 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	int Charge;
-
-	UPROPERTY(BlueprintReadOnly)
 	int Stat;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -108,6 +105,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UObject* Owner;
 
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FSkillPrereq> CardTypesPlayed;
+
 	UFUNCTION(BlueprintCallable)
 	void AddEffect(FEffectInstance CardEffect, UObject* Applier) override;
 
@@ -115,7 +115,10 @@ public:
 	void ClearEffects() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ModifyCharge(int Modifier);
+	void AddActivationPoint(EGenre Genre, int ActivationPointIncrease);
+
+	UFUNCTION(BlueprintCallable)
+	void ResetActivationPoints();
 
 	UFUNCTION(BlueprintCallable)
 	void ModifyStat(int Modifier);
@@ -126,7 +129,7 @@ public:
 	void CallEffectEvent(EEffectEvent Event, UObject* Payload) override;
 
 	UPROPERTY(BlueprintAssignable)
-	FMulticastDynamicDelegate OnChargeModify;
+	FMulticastDynamicDelegate OnActivationPointModify;
 
 	UPROPERTY(BlueprintAssignable)
 	FEffectDelegate OnAddEffect;

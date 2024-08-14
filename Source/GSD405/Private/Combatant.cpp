@@ -97,7 +97,7 @@ void ACombatant::StartTurn_Implementation()
 		return;
 	}
 	isTurn = true;
-	Inventory->WipeCharge();
+	Inventory->ResetSkillRequirements();
 	Inventory->ResetStats();
 	Inventory->ResetItemUse();
 	RefreshAP();
@@ -158,28 +158,27 @@ void ACombatant::PlayCard_Implementation(UCardInstance* Card, UItemInstance* Ite
 {
 
 	ModifyAP(-Card->CardData->ActionPointCost);
+	Item->AddActivationPoint(Card->Genre, Card->CardData->ActivationPoints);
 	for (FEffectInstance Effect : Card->CardData->Effects) {
 		Item->AddEffect(Effect, this);
 	}
 }
 
-void ACombatant::UseSkill_Implementation(FSkillInstance Skill)
+void ACombatant::UseSkill_Implementation(FSkillInstance SkillInstance)
 {
 	TArray<ACombatant*> Targets;
-	GetTargets(Skill.Item->TargetingType, Targets);
+	GetTargets(SkillInstance.Item->TargetingType, Targets);
 
 	USkillPayload* SkillPayload = NewObject<USkillPayload>();
-	SkillPayload->Skill = Skill;
+	SkillPayload->Skill = SkillInstance;
 	for (ACombatant* Target : Targets) 
 		SkillPayload->Targets.Add(Target);
 	
-	Skill.Item->CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
+	SkillInstance.Item->CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
 	CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
 
 	for (ACombatant* Target : Targets) {
-		for (FEffectInstance Effect : Skill.Skill->Effects) {
-			Target->AddEffect(Effect, Skill.Item);
-		}
+			Target->AddEffect(SkillInstance.Skill.Skill->Effect, SkillInstance.Item);
 	}
 }
 

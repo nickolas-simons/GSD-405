@@ -62,7 +62,7 @@ public:
 	void InitItemInstances();
 
 	UFUNCTION(BlueprintCallable)
-	void WipeCharge();
+	void ResetSkillRequirements();
 
 	UFUNCTION(BlueprintCallable)
 	void ResetStats();

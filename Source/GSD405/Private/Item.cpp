@@ -43,10 +43,25 @@ void UItemInstance::ClearEffects()
 	}
 }
 
-void UItemInstance::ModifyCharge(int Modifier)
+void UItemInstance::AddActivationPoint(EGenre Genre, int ActivationPointIncrease)
 {
-	Charge = FMath::Clamp(Charge + Modifier, 0, Item->MaxCharge);
-	OnChargeModify.Broadcast();
+	for (FSkillPrereq CardType : CardTypesPlayed) {
+		if (CardType.Genre == Genre) {
+			CardType.Count+= ActivationPointIncrease;
+			OnActivationPointModify.Broadcast();
+			return;
+		}
+	}
+	FSkillPrereq NewGenre;
+	NewGenre.Genre = Genre;
+	NewGenre.Count = 1;
+	CardTypesPlayed.Add(NewGenre);
+	OnActivationPointModify.Broadcast();
+}
+
+void UItemInstance::ResetActivationPoints()
+{
+	CardTypesPlayed.Empty();
 }
 
 void UItemInstance::ModifyStat(int Modifier)
