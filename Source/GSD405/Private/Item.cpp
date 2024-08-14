@@ -45,6 +45,13 @@ void UItemInstance::ClearEffects()
 
 void UItemInstance::AddActivationPoint(EGenre Genre, int ActivationPointIncrease)
 {
+	for (FItemSkill Skill : Item->Skills) {
+		for (FSkillPrereq SkillRequirement : Skill.SkillRequirement) {
+
+		}
+	}
+
+
 	for (FSkillPrereq CardType : CardTypesPlayed) {
 		if (CardType.Genre == Genre) {
 			CardType.Count+= ActivationPointIncrease;

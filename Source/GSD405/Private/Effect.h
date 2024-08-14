@@ -12,7 +12,8 @@ enum EGenre
 	Techno = 0	UMETA(DisplayName = "Techno"),
 	Biomutation = 1		UMETA(DisplayName = "Biomutation"),
 	Military = 2		UMETA(DisplayName = "Military"),
-	Mechanical = 4			UMETA(DisplayName = "Mechanical")
+	Mechanical = 4		UMETA(DisplayName = "Mechanical"),
+	Universal = 5		UMETA(DisplayName = "Universal")
 };
 
 UENUM(BlueprintType)

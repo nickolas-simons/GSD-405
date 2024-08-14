@@ -63,7 +63,7 @@ public:
 	USkill* Skill;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSkillPrereq> SkillReq;
+	TArray<FSkillPrereq> SkillRequirement;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
