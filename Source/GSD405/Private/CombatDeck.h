@@ -11,8 +11,8 @@
  * 
  */
 
-#define MAX_HAND_SIZE 7
-#define NUM_SHUFFLES 1
+#define DEFAULT_MAX_HAND_SIZE 7
+#define DEFAULT_NUM_SHUFFLES 1
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawCardDelegate, UCardInstance*, Card);
 
@@ -22,6 +22,12 @@ class UCombatDeck : public UActorComponent
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHandSize = DEFAULT_MAX_HAND_SIZE;
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumShuffles = DEFAULT_NUM_SHUFFLES;
+
 	UFUNCTION(BlueprintCallable)
 	void Draw(int NumCards);
 

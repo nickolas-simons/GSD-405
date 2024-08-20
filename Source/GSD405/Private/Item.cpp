@@ -7,6 +7,28 @@ UItem::UItem()
 {
 }
 
+void UItemInstance::ConstructSkillInstances()
+{
+	SkillInstances.Empty();
+	for (FItemSkill ItemSkill : ItemInfo->Skills) {
+		USkillInstance* SkillInstance = NewObject<USkillInstance>(this);
+		SkillInstance->Item = this;
+		SkillInstance->ItemSkill = ItemSkill;
+		SkillInstances.Add(SkillInstance);
+	}
+	
+}
+
+void UItemInstance::CalculateSkillActivationPoints()
+{
+	for (USkillInstance* SkillInstance : SkillInstances) {
+		SkillInstance->ResetActivationPoints();
+		for (FCardTypeCount ActivationPointType : ActivationPoints) {
+			SkillInstance->AddActivationPoints(ActivationPointType.Genre, ActivationPointType.Count);
+		}
+	}
+}
+
 void UItemInstance::CullEffects()
 {
 	UE_LOG(LogTemp, Log, TEXT("CULLING"));
@@ -26,7 +48,7 @@ UItemInstance::UItemInstance()
 
 void UItemInstance::AddEffect(FEffectInstance CardEffect, UObject* Applier)
 {
-	UEffect* Effect = NewObject<UEffect>(this, CardEffect.Effect);
+	UEffect* Effect = NewObject<UEffect>( this,CardEffect.Effect);
 	Effects.Add(Effect);
 	Effect->Magnitude = CardEffect.Magnitude;
 	Effect->Owner = this;
@@ -43,32 +65,29 @@ void UItemInstance::ClearEffects()
 	}
 }
 
-void UItemInstance::AddActivationPoint(EGenre Genre, int ActivationPointIncrease)
+void UItemInstance::ModifyActivationPoints(EGenre Genre, int ActivationPointModifier)
 {
-	for (FItemSkill Skill : Item->Skills) {
-		for (FSkillPrereq SkillRequirement : Skill.SkillRequirement) {
-
+	bool bNewType = true;
+	for (int i = 0; i < ActivationPoints.Num(); i++) {
+		if (ActivationPoints[i].Genre == Genre) {
+			ActivationPoints[i].Count += ActivationPointModifier;
+			bNewType = false;
 		}
 	}
-
-
-	for (FSkillPrereq CardType : CardTypesPlayed) {
-		if (CardType.Genre == Genre) {
-			CardType.Count+= ActivationPointIncrease;
-			OnActivationPointModify.Broadcast();
-			return;
-		}
+	if (bNewType) {
+		FCardTypeCount NewType;
+		NewType.Genre = Genre;
+		NewType.Count = ActivationPointModifier;
+		ActivationPoints.Add(NewType);
 	}
-	FSkillPrereq NewGenre;
-	NewGenre.Genre = Genre;
-	NewGenre.Count = 1;
-	CardTypesPlayed.Add(NewGenre);
+
+	CalculateSkillActivationPoints();
 	OnActivationPointModify.Broadcast();
 }
 
 void UItemInstance::ResetActivationPoints()
 {
-	CardTypesPlayed.Empty();
+	
 }
 
 void UItemInstance::ModifyStat(int Modifier)

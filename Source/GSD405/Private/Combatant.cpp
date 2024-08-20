@@ -12,8 +12,6 @@ ACombatant::ACombatant()
 	StatusWidget->SetupAttachment(GetCapsuleComponent(), FName("StatusWidget"));
 	StatusWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(64);
-	
-	CombatDeck = CreateDefaultSubobject<UCombatDeck>(TEXT("CombatDeck"));
 }
 
 int ACombatant::GetHealth()
@@ -97,11 +95,7 @@ void ACombatant::StartTurn_Implementation()
 		return;
 	}
 	isTurn = true;
-	Inventory->ResetSkillRequirements();
-	Inventory->ResetStats();
-	Inventory->ResetItemUse();
 	RefreshAP();
-	CombatDeck->Draw(NUM_CARDS_DRAWN);
 	CallEffectEvent(EEffectEvent::TurnStart, nullptr);
 }
 
@@ -118,11 +112,6 @@ void ACombatant::CallEffectEvent(EEffectEvent Event, UObject* Payload)
 		case EEffectEvent::TurnStart:
 		case EEffectEvent::SkillUsed:
 			CullEffects();
-		case EEffectEvent::TakeDamagePostMitigation:
-		case EEffectEvent::TakeDamagePreMitigation:
-			for (UItemInstance* Item : Inventory->ItemInstances)
-				if(Item)
-					Item->CallEffectEvent(Event, Payload);
 		
 		default:
 			break;
@@ -150,36 +139,6 @@ void ACombatant::BeginPlay()
 void ACombatant::StartCombat_Implementation()
 {
 	ClearEffects();
-	Inventory->InitItemInstances();
-	CombatDeck->InitDeck(Inventory->ConstructDeck());
-}
-
-void ACombatant::PlayCard_Implementation(UCardInstance* Card, UItemInstance* Item)
-{
-
-	ModifyAP(-Card->CardData->ActionPointCost);
-	Item->AddActivationPoint(Card->Genre, Card->CardData->ActivationPoints);
-	for (FEffectInstance Effect : Card->CardData->Effects) {
-		Item->AddEffect(Effect, this);
-	}
-}
-
-void ACombatant::UseSkill_Implementation(FSkillInstance SkillInstance)
-{
-	TArray<ACombatant*> Targets;
-	GetTargets(SkillInstance.Item->TargetingType, Targets);
-
-	USkillPayload* SkillPayload = NewObject<USkillPayload>();
-	SkillPayload->Skill = SkillInstance;
-	for (ACombatant* Target : Targets) 
-		SkillPayload->Targets.Add(Target);
-	
-	SkillInstance.Item->CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
-	CallEffectEvent(EEffectEvent::SkillUsed, SkillPayload);
-
-	for (ACombatant* Target : Targets) {
-			Target->AddEffect(SkillInstance.Skill.Skill->Effect, SkillInstance.Item);
-	}
 }
 
 void ACombatant::RefreshAP()

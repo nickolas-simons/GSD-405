@@ -11,8 +11,6 @@
 #include "Effectable.h"
 #include "Combatant.generated.h"
 
-#define NUM_CARDS_DRAWN 5
-
 DECLARE_DELEGATE_TwoParams(FGetTargetsDelegate, ACombatant*, TArray<ACombatant*>&);
 
 
@@ -70,12 +68,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool isAlive = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UCombatDeck* CombatDeck;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInventory* Inventory;
-
 	UPROPERTY(BlueprintReadOnly)
 	bool isTurn;
 
@@ -94,12 +86,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int MaxHealth;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void PlayCard(UCardInstance* Card, UItemInstance* Item);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UseSkill(FSkillInstance Skill);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Die();
@@ -121,8 +107,6 @@ protected:
 
 	UFUNCTION()
 	void GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<ACombatant*>& ReturnByRef);
-
-private:
 
 	void CullEffects();
 

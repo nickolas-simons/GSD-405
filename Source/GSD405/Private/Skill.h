@@ -37,11 +37,11 @@ public:
 	FText SkillDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FEffectInstance Effect;
+	TSubclassOf<UEffect> EffectType;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
-struct FSkillPrereq
+struct FCardTypeCount
 {
 	GENERATED_BODY()
 
@@ -63,20 +63,39 @@ public:
 	USkill* Skill;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSkillPrereq> SkillRequirement;
+	int Magnitude;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FCardTypeCount> SkillRequirement;
 };
 
-USTRUCT(Blueprintable, BlueprintType)
-struct FSkillInstance
+UCLASS(Blueprintable, BlueprintType)
+class USkillInstance : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly)
 	UItemInstance* Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FItemSkill Skill;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FCardTypeCount> ActivationPoints;
+
+	UPROPERTY(BlueprintReadOnly)
+	FItemSkill ItemSkill;
+
+	UFUNCTION()
+	void AddActivationPoints(TEnumAsByte<EGenre> Genre, int ActivationPointIncrease);
+
+	UFUNCTION()
+	int GetActivationPoints(TEnumAsByte<EGenre> Genre);
+
+	UFUNCTION()
+	void ResetActivationPoints();
+
+private:
+	UFUNCTION()
+	void AddToActivationPointCount(TEnumAsByte<EGenre> Genre, int ActivationPointIncrease);
 };
 
 
@@ -87,7 +106,7 @@ class USkillPayload : public UObject
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FSkillInstance Skill;
+	USkillInstance* Skill;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray <UObject*> Targets;

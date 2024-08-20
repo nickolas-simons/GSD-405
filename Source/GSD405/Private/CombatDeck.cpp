@@ -6,7 +6,7 @@
 void UCombatDeck::Draw(int NumCards)
 {
 	int HandSize = Hand.Num();
-	int CardsToBeDrawn = (MAX_HAND_SIZE - HandSize > NumCards) ? NumCards : MAX_HAND_SIZE - HandSize;
+	int CardsToBeDrawn = (MaxHandSize - HandSize > NumCards) ? NumCards : MaxHandSize - HandSize;
 	for (int i = 0; i < CardsToBeDrawn; i++) {
 		if (DrawDeck.IsEmpty()) 
 			Shuffle();
@@ -38,7 +38,7 @@ void UCombatDeck::Shuffle()
 	DrawDeck.Append(DiscardDeck);
 	DiscardDeck.Empty();
 
-	for (int _ = 0; _ < NUM_SHUFFLES; _++) {
+	for (int _ = 0; _ < NumShuffles; _++) {
 		for (int i = 0; i < DrawDeck.Num(); i++) {
 			int SwapIndex = FMath::RandRange(i, DrawDeck.Num() - 1);
 			DrawDeck.Swap(i, SwapIndex);

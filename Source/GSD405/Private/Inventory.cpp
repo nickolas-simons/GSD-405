@@ -49,10 +49,11 @@ void UInventory::InitItemInstances()
 	ItemInstances.Empty();
 	for (UItem* Item : EquippedItems) {
 		if (Item) {
-			UItemInstance* ItemInstance = NewObject<UItemInstance>();
-			ItemInstance->Item = Item;
+			UItemInstance* ItemInstance = NewObject<UItemInstance>(this);
+			ItemInstance->ItemInfo = Item;
 			ItemInstance->Owner = GetOwner();
 			ItemInstance->TargetingType = Item->DefaultTargetingType;
+			ItemInstance->ConstructSkillInstances();
 			ItemInstances.Add(ItemInstance);
 		}
 		else

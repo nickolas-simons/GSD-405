@@ -69,9 +69,6 @@ public:
 	TArray<FItemSkill> Skills;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	int MaxCharge;
-
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TEnumAsByte<EGenre> Genre;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -98,15 +95,21 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UEffect*> Effects;
 
+	UPROPERTY()
+	TArray<FCardTypeCount> ActivationPoints;
+
 public:
 	UPROPERTY(BlueprintReadOnly)
-	UItem* Item;
+	UItem* ItemInfo;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<USkillInstance*> SkillInstances;
 
 	UPROPERTY(BlueprintReadOnly)
 	UObject* Owner;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FSkillPrereq> CardTypesPlayed;
+	UFUNCTION()
+	void ConstructSkillInstances();
 
 	UFUNCTION(BlueprintCallable)
 	void AddEffect(FEffectInstance CardEffect, UObject* Applier) override;
@@ -115,7 +118,7 @@ public:
 	void ClearEffects() override;
 
 	UFUNCTION(BlueprintCallable)
-	void AddActivationPoint(EGenre Genre, int ActivationPointIncrease);
+	void ModifyActivationPoints(EGenre Genre, int ActivationPointModifier);
 
 	UFUNCTION(BlueprintCallable)
 	void ResetActivationPoints();
@@ -143,5 +146,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsUsed;
 private:
+
+	void CalculateSkillActivationPoints();
+
 	void CullEffects() override;
 };

@@ -131,7 +131,6 @@ void UCombat::Setup()
 		Combatant->EndTurnDelegate.BindUObject(this, &UCombat::NextTurn);
 		Combatant->DeathDelegate.BindUObject(this, &UCombat::CheckGameEnd);
 		Combatant->GetTargetsDelegate.BindUObject(this, &UCombat::GetTargetArray);
-		Combatant->CombatDeck->Shuffle();
 	}
 }
 
