@@ -15,7 +15,7 @@ struct FAction
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FItemSkill Skill;
+	TArray<FEffectInstance> Effects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<ETargetingType> TargetingType;

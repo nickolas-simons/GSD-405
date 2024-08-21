@@ -10,6 +10,7 @@ UCombat::UCombat()
 
 void UCombat::StartCombat()
 {
+	TurnOrder.Empty();
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
 	if (PlayerCharacter) {
@@ -50,7 +51,6 @@ void UCombat::RoundStart()
 
 void UCombat::EndCombat()
 {
-	TurnOrder.Empty();
 	Current = -1;
 	ACombatant* Player = Cast<ACombatant>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	Player->CombatEnd();
