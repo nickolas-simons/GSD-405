@@ -198,15 +198,15 @@ void ACombatant::GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<AC
 		for (int i = self + 1; i < Targets.Num(); i++)
 			ReturnByRef.Add(Targets[i]);
 		break;
-	case ETargetingType::Left:
-		for (int i = self+1; i < Targets.Num(); i++)
+	case ETargetingType::LeftEnemy:
+		for (int i = self + 1; i < Targets.Num(); i++)
 			if (Targets[i]->isAlive) {
 				ReturnByRef.Add(Targets[i]);
 				break;
 			}
 		break;
-	case ETargetingType::Right:
-		for(int i = Targets.Num()-1; i > 0; i--)
+	case ETargetingType::RightEnemy:
+		for (int i = Targets.Num() - 1; i > 0; i--)
 			if (Targets[i]->isAlive) {
 				ReturnByRef.Add(Targets[i]);
 				break;
@@ -224,8 +224,27 @@ void ACombatant::GetTargets(TEnumAsByte<ETargetingType> TargetingType, TArray<AC
 				flag = i;
 		ReturnByRef.Add(Targets[flag]);
 		break;
-	}
-	
+	case ETargetingType::LeftAlly:
+		for (int i = 0; i < self; i++)
+			if (Targets[i]->isAlive) {
+				ReturnByRef.Add(Targets[i]);
+				break;
+			}
+		break;
+	case ETargetingType::RightAlly:
+		for (int i = self - 1; i >= 0; i--)
+			if (Targets[i]->isAlive) {
+				ReturnByRef.Add(Targets[i]);
+				break;
+			}
+		break;
+	case ETargetingType::AllAlly:
+		for (int i = 0; i < self; i++)
+			if (Targets[i]->isAlive) {
+				ReturnByRef.Add(Targets[i]);
+			}
+		break;
+	};
 }
 
 void ACombatant::UseSkill_Implementation(USkillInstance* SkillInstance)

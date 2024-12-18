@@ -6,6 +6,18 @@
 #include "Combatant.h"
 #include "Enemy.generated.h"
 
+USTRUCT(Blueprintable)
+struct FEnemyAction {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FSkillVariant Skill;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	int ActionPointCost;
+};
+
 
 UCLASS()
 class AEnemy : public ACombatant
@@ -15,7 +27,7 @@ class AEnemy : public ACombatant
 protected:
 
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
-	TArray<FSkillVariant> SkillSelection;
+	TArray<FEnemyAction> SkillSelection;
 
 	virtual void InitializeSkills() override;
 };

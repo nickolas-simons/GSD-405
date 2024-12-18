@@ -19,10 +19,13 @@ enum ETargetingType
 {
 	Self = 0 UMETA(DisplayName = "Self"),
 	All = 1 UMETA(DisplayName = "All"),
-	Left = 3 UMETA(DisplayName = "Left"),
-	Right = 4 UMETA(DisplayName = "Right"),
+	LeftEnemy = 3 UMETA(DisplayName = "LeftEnemy"),
+	RightEnemy = 4 UMETA(DisplayName = "RightEnemy"),
 	MostHealth = 6 UMETA(DisplayName = "MostHealh"),
-	LeastHealth = 7 UMETA(DisplayName = "LeastHealth")
+	LeastHealth = 7 UMETA(DisplayName = "LeastHealth"),
+	AllAlly = 8 UMETA(DisplayName = "AllAlly"),
+	LeftAlly = 9 UMETA(DisplayName = "LeftAlly"),
+	RightAlly = 10 UMETA(DisplayName = "RightAlly"),
 };
 
 USTRUCT(BlueprintType)

@@ -51,16 +51,32 @@ void USkillInstance::CalculateRequirements()
 	for (UCardInstance* Card : ActivationCards) {
 		if (Card->Genre == Universal)
 			UniversalCards++;
-		else
+		else {
+			bool bCardUsed = false;
 			for (int i = 0; i < RequiredCards.Num(); i++) {
 				if (Card->Genre == RequiredCards[i].Genre && RequiredCards[i].Count > 0) {
 					RequiredCards[i].Count--;
+					bCardUsed = true;
 					if (RequirementsFulfilled()) {
 						TimesRequirementFulfilled++;
 						RequiredCards = SkillVariant.SkillRequirement;
 					}
+					break;
 				}
 			}
+
+			if(!bCardUsed)
+				for (int i = 0; i < RequiredCards.Num(); i++) {
+					if (RequiredCards[i].Genre == Universal && RequiredCards[i].Count > 0) {
+						RequiredCards[i].Count--;
+						if (RequirementsFulfilled()) {
+							TimesRequirementFulfilled++;
+							RequiredCards = SkillVariant.SkillRequirement;
+						}
+						break;
+					}
+				}
+		}
 	}
 
 	while (UniversalCards > 0) {
