@@ -8,7 +8,7 @@ void AEnemy::InitializeSkills()
 	Skills.Empty();
 	for (FEnemyAction SkillInfo : SkillSelection) {
 			USkillInstance* Skill = NewObject<USkillInstance>();
-			Skill->Targeting = SkillInfo.Skill.Skill->DefaultTargeting;
+			Skill->Targeting = SkillInfo.Targeting;
 			Skill->SkillVariant = SkillInfo.Skill;
 			Skill->Owner = this;
 			Skills.Add(Skill);

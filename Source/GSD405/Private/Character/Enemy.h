@@ -16,6 +16,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	int ActionPointCost;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TEnumAsByte<ETargetingType> Targeting;
 };
 
 
